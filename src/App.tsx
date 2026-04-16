@@ -5,6 +5,7 @@ import YearChanger from "./features/year/components/YearChanger";
 import useYear from "./features/year/hooks/useYear";
 import { MONTHS } from "./shared/constants";
 import MonthWrapper from "./features/month/MonthWrapper";
+import CategoriesDatalist from "./features/categories/components/CategoriesDatalist";
 
 export function App() {
   const [baseSalary, setBaseSalary, removeBaseSalary] = useBaseSalary();
@@ -22,11 +23,14 @@ export function App() {
     <YearChanger year={year} setYear={setYear} />
 
     <div>Salário: {baseSalary}</div>
-    <button type="button" onClick={() => removeBaseSalary()}>Limpar Salário</button>
+    <button type="button" className="button" onClick={() => removeBaseSalary()}>Limpar Salário</button>
+
 
     {MONTHS.map((month, monthIdx) => {
       return <MonthWrapper key={month} month={month} monthIdx={monthIdx} />
     })}
+
+    <CategoriesDatalist />
   </>;
 }
 

@@ -36,7 +36,7 @@ export default function MonthWrapper({ month, monthIdx }: Props) {
     return <>
         <div>
             <div tabIndex={0} className="flex cursor-pointer" onClick={toggleOpen} onKeyUp={handleOpen}>
-                <div className={`${open && "rotate-90"} align-middle`}>{">"}</div>
+                <div className={`${open && "rotate-90"}`}>{">"}</div>
                 <div className='grow'>{month}</div>
                 <div className={`${(totalSaved < 0) && 'text-red-400'} text-right before:content-['R$_'] before:text-(--hint-color)`}>{(totalSaved).toFixed(2)}</div>
             </div>

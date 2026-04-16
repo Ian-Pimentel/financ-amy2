@@ -2,10 +2,15 @@
 
 @layer base {
   :root {
-    --font-color: rgb(243, 237, 219);
-    --hint-color: rgb(from var(--font-color) r g b / calc(alpha * 0.5));;
+    /* css é MUITO legal */
+    --theme-color: #ff00dd;
 
-    --bg-color: rgb(36,36,36);
+    --bg-color: hsl(from var(--theme-color) h calc(s * 0.5) 10%);
+
+    --font-color: hsl(from var(--theme-color) h calc(s * 0.8) 90%);
+
+    --hint-color: hsl(from var(--font-color) h s l / 0.7);
+    --table-color: hsl(from var(--font-color) h s l / 0.3);
   }
 
   body {
@@ -17,7 +22,7 @@
   }
 
   * {
-    @apply text-(--font-color);
+    @apply text-(--font-color) ;
   }
 
   dialog[open] {
@@ -37,7 +42,7 @@
     @apply text-(--hint-color)
   }
 
-  button {
+  .button {
     @apply border rounded p-1 cursor-pointer;
   }
 }
