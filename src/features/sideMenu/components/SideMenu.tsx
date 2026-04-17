@@ -1,9 +1,8 @@
 import useBaseSalary from "@/features/salary/hooks/useBaseSalary";
 import ThemePickerModal from "@/features/theme/components/ThemePickerModal";
-import SalaryPromptModal from "@/features/salary/components/SalaryPromptModal"; // Supondo que você importe ele aqui
+import SalaryPromptModal from "@/shared/components/MonetaryPromptModal"; // Supondo que você importe ele aqui
 import Dialog from "@/shared/components/Dialog";
 import ToggleButton from "@/shared/components/ToggleButton";
-import { COG_UNICODE, MULTIPLY_UNICODE } from "@/shared/constants";
 import { useToggle } from "usehooks-ts";
 import MenuItem from "./MenuItem";
 import { db } from "@/shared/dexieDB";
@@ -57,7 +56,7 @@ export default function SideMenu() {
         />
 
         <SalaryPromptModal
-            initialValue={baseSalary > 0 ? baseSalary.toString() : ''}
+            initialValue={baseSalary}
             isOpen={isSalaryModalOpen}
             onSave={(newSalary) => {
                 setBaseSalary(newSalary);

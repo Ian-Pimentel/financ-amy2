@@ -1,7 +1,6 @@
 import type { Expense } from "@/shared/dexieDB";
-import useExpenseMutation from "./hooks/useExpenseMutation";
-import TrashBin from "@/shared/components/TrashBin";
-import { TRASHBIN_UNICODE } from "@/shared/constants";
+import useExpenseMutation from "../hooks/useExpenseMutation";
+import MonetaryInput from "@/shared/components/MonetaryInput";
 
 export type Props = {
     expense: Expense;
@@ -11,12 +10,11 @@ export default function ExpenseItem({ expense }: Props) {
     const { deleteExpense, editExpense } = useExpenseMutation();
     // const [categories] = useCategories();
 
-    const handleValueInput = (value: string) => editExpense({ ...expense, value: Number(value.replace(',', '.')) });
+    const handleValueInput = (value: number) => editExpense({ ...expense, value: value });
 
-    const borders = true;
 
     return <>
-        <div className={"flex p-1 " + (borders && "border-(--light-border-color) border-r border-b")}>
+        <div className="flex p-1 border-(--light-border-color) border-r border-b">
             <input
                 className="w-full h-full"
                 id={`name-${expense.id}`}
@@ -42,22 +40,15 @@ export default function ExpenseItem({ expense }: Props) {
                 />
             </span>
         </div>
-        <span className={"p-1 flex items-center before:content-['R$_'] before:text-(--hint-color) " + (borders && "border-(--light-border-color) border-b border-r")}>
-            <input
-                className="text-right w-full h-full"
-                type="number"
-                name="value"
-                id={`value-${expense.id}`}
-                value={expense.value}
-                onChange={(ev) => handleValueInput(ev.target.value)}
-                step={0.01}
-                min={1}
-            />
-        </span>
-        <span className={"p-1 flex justify-center items-center " + (borders && "border-(--light-border-color) border-b")}>
-            <span className="w-1/2 fill-(--font-color) cursor-pointer" onClick={() => deleteExpense(expense.id)}>
+
+        <div className="*:h-full border-(--light-border-color) border-b border-r">
+            <MonetaryInput amount={expense.value} onChange={handleValueInput} alignRight />
+        </div>
+
+        <div className="p-1 flex justify-center items-center border-(--light-border-color) border-b">
+            <span className="fill-(--font-color) cursor-pointer" onClick={() => deleteExpense(expense.id)}>
                 🗑️
             </span>
-        </span>
+        </div>
     </>;
 }

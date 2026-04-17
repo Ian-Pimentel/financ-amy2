@@ -1,10 +1,10 @@
 import "./index.css";
 import useBaseSalary from "@/features/salary/hooks/useBaseSalary";
-import SalaryPromptModal from "@/features/salary/components/SalaryPromptModal";
+import SalaryPromptModal from "@/shared/components/MonetaryPromptModal";
 import YearChanger from "./features/year/components/YearChanger";
 import useYear from "./features/year/hooks/useYear";
 import { MONTHS } from "./shared/constants";
-import MonthWrapper from "./features/month/MonthWrapper";
+import MonthWrapper from "./features/month/components/MonthWrapper";
 import CategoriesDatalist from "./features/categories/components/CategoriesDatalist";
 import SideMenu from "./features/sideMenu/components/SideMenu";
 

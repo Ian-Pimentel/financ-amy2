@@ -1,24 +1,35 @@
+import type { MonthIndices } from "@/types";
 import { Dexie, type EntityTable } from "dexie";
 
 const EXPENSE_DB_NAME = "ExpensesDB";
 
-interface Expense {
-    id: number
-    date: Date
-    name: string
-    value: number
-    category: string
+type MonthSalary = {
+    id: number,
+    year: number,
+    monthIdx: MonthIndices,
+
+    salary: number,
+};
+
+type Expense = {
+    id: number,
+    date: Date,
+    name: string,
+    value: number,
+    category: string,
 };
 
 type ExpenseDB = Expense & {
     year: number;
-    monthIdx: number;
+    monthIdx: MonthIndices;
 };
 
-export type InsertExpense = Omit<Expense, 'id'>;
+type InsertExpense = Omit<Expense, 'id'>;
+type InsertMonthSalary = Omit<MonthSalary, 'id'>;
 
 const db = new Dexie(EXPENSE_DB_NAME) as Dexie & {
-    expenses: EntityTable<ExpenseDB, "id", InsertExpense>
+    expenses: EntityTable<ExpenseDB, "id", InsertExpense>,
+    monthSalaries: EntityTable<MonthSalary, "id", InsertMonthSalary>,
 };
 
 // Usar isso aqui para fazer a validação ao invés do hooks?
@@ -48,6 +59,7 @@ const db = new Dexie(EXPENSE_DB_NAME) as Dexie & {
 
 db.version(1).stores({
     expenses: "++id, [year+monthIdx], date, name, value, category",
+    monthSalaries: "++id, [year+monthIdx], salary"
 });
 
 // lambda nn tem acesso aos callbacks, pois nn herda o this.
@@ -78,5 +90,10 @@ export function getExpensesCollection(year?: number, monthIdx?: number) {
     return db.expenses.orderBy("[year+monthIdx]");
 }
 
-export type { Expense }
+export type {
+    MonthSalary,
+    Expense,
+    InsertExpense,
+    InsertMonthSalary
+}
 export { db }

@@ -2,6 +2,8 @@ import Dialog from "@/shared/components/Dialog";
 import { useDebounceCallback } from "usehooks-ts";
 import useThemeColor from "../hooks/useThemeColor";
 import { useEffect, useState } from "react";
+import ColorPicker from "@/shared/components/ColorPicker";
+import useComputedStyle from "@/shared/hooks/useCssProperty";
 
 type Props = {
     isOpen: boolean;
@@ -27,17 +29,14 @@ export default function ThemePickerModal({ isOpen, onClose }: Props) {
 
     return <>
         <Dialog isOpen={isOpen} onCancel={handleCancel} dismissable>
-            <form className="bg-(--bg-color) min-w-[18rem] w-[80vw] lg:w-[40vw] p-2 rounded-xl border" onSubmit={handleSubmit}>
+            <form className="bg-(--bg-color) w-[90vw] md:w-[50vw] lg:w-[40vw] p-2 rounded-xl border" onSubmit={handleSubmit}>
                 <fieldset>
-                    <label>
-                        Selecione um novo tema:
-                        <input type="color" name="theme-picker" value={theme} onChange={(ev) => setThemeDebounced(ev.target.value)} />
-                    </label>
+                    <ColorPicker color={theme} onChange={(newColor) => setThemeDebounced(newColor)} />
                 </fieldset>
-                <div>
-                    <button type="button" className="button" onClick={handleCancel}>Cancelar</button>
-                    <button type="button" className="button" onClick={resetTheme}>Resetar Tema</button>
-                    <input type="submit" className="button" value="Salvar" />
+                <div className="mt-2 flex justify-between">
+                    <button type="button" className="button w-1/4" onClick={handleCancel}>Cancelar</button>
+                    <button type="button" className="button w-[1/3] line-clamp-1!" onClick={resetTheme}>Resetar Tema</button>
+                    <input type="submit" className="button w-1/4" value="Salvar" />
                 </div>
             </form>
         </Dialog>

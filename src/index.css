@@ -3,7 +3,7 @@
 @layer base {
   :root {
     /* css é MUITO legal */
-    --original-theme-color: #110e0b;
+    --original-theme-color: #1d1207;
     --theme-color: var(--original-theme-color);
 
     --bg-color: hsl(from var(--theme-color) h calc(s * 0.5) 10%);
@@ -11,9 +11,14 @@
     --font-color: hsl(from var(--theme-color) h calc(s * 0.8) 85%);
 
     --hint-color: hsl(from var(--font-color) h s l / 0.5);
+    --focus-color: hsl(from var(--theme-color) h 100% 40%);
+
     --light-border-color: hsl(from var(--font-color) h s l / 0.3);
 
     --red: rgb(255,0,0);
+
+    overscroll-behavior: none;
+    touch-action: manipulation;
   }
 
   body {
@@ -65,6 +70,6 @@
   }
 
   .button {
-    @apply border rounded p-1 cursor-pointer;
+    @apply border rounded p-1 cursor-pointer block min-w-fit;
   }
 }
