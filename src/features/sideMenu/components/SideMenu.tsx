@@ -34,7 +34,7 @@ export default function SideMenu() {
             <div className="text-lg">⚙️</div>
         </ToggleButton>
 
-        <Dialog isOpen={isMenuOpen} type="top-right" onCancel={toggleMenuIsOpen} dismissable>
+        <Dialog isOpen={isMenuOpen} type="top-left" onCancel={toggleMenuIsOpen} dismissable>
             <aside className="bg-linear-to-b from-(--bg-color) to-transparent p-2 h-screen w-screen md:w-[30vw] xl:w-[15vw]">
                 <div className="flex justify-between mb-2">
                     <span className="text-2xl">Menu</span>
@@ -59,7 +59,10 @@ export default function SideMenu() {
         <SalaryPromptModal
             initialValue={baseSalary > 0 ? baseSalary.toString() : ''}
             isOpen={isSalaryModalOpen}
-            onSave={setBaseSalary}
+            onSave={(newSalary) => {
+                setBaseSalary(newSalary);
+                toggleSalaryModal();
+            }}
             onCancel={toggleSalaryModal}
         />
     </>;
