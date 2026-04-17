@@ -15,9 +15,9 @@ export default function ExpenseList({ expenses, monthIdx }: Props) {
 
     return <>
         <div className="grid grid-cols-[6fr_2fr_min-content]">
-            <span className={"p-1 font-semibold " + (borders && "border-(--table-color) border-r border-b")}>Gasto</span>
-            <span className={"p-1 font-semibold text-right " + (borders && "border-(--table-color) border-r border-b")}>Valor</span>
-            <span className={"p-1 font-semibold text-center " + (borders && "border-(--table-color) border-b")}>Ações</span>
+            <span className={"p-1 font-semibold " + (borders && "border-(--light-border-color) border-r border-b")}>Gasto</span>
+            <span className={"p-1 font-semibold text-right " + (borders && "border-(--light-border-color) border-r border-b")}>Valor</span>
+            <span className={"p-1 font-semibold text-center " + (borders && "border-(--light-border-color) border-b")}>Ações</span>
 
             {expenses.map((exp) => <ExpenseItem key={exp.id} expense={exp} />)}
             <AddExpense monthIdx={monthIdx} />

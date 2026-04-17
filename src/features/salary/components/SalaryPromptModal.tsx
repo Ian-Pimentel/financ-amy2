@@ -1,14 +1,24 @@
-import ModalDialog from "@/shared/components/ModalDialog";
-import { useState } from "react";
+import Dialog from "@/shared/components/Dialog";
+import { useEffect, useState } from "react";
 
 type Props = {
     isOpen: boolean;
     onSave: (salary: number) => void;
+    initialValue?: string;
+    onCancel?: () => void;
 }
 
-export default function SalaryPromptModal({ isOpen, onSave }: Props) {
-    const [inputValue, setInputValue] = useState('');
+export default function SalaryPromptModal({ isOpen, onSave, onCancel, initialValue = "" }: Props) {
+    const [inputValue, setInputValue] = useState(initialValue);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        setError('');
+        setInputValue(initialValue);
+    }, [open])
+
+    console.log(inputValue)
+
 
     const validateValue = (value: number) => {
         if (isNaN(value)) {
@@ -34,8 +44,8 @@ export default function SalaryPromptModal({ isOpen, onSave }: Props) {
 
     // TODO: criar componente para input numérico/monetário (com o sufixo da moeda bonitinho do lado) 
     return <>
-        <ModalDialog isOpen={isOpen}>
-            <form onSubmit={handleSubmit} className="min-w-[18rem] w-[80vw] lg:w-[40vw] p-2 rounded-xl border">
+        <Dialog isOpen={isOpen} dismissable={initialValue.length > 0} onCancel={onCancel}>
+            <form onSubmit={handleSubmit} className="bg-(--bg-color) min-w-[18rem] w-[80vw] lg:w-[40vw] p-2 rounded-xl border">
                 <h2 className="text-xl mb-2">Insira seu salário</h2>
                 <fieldset>
                     <label htmlFor="base-salary-input" className="block">Salário:</label>
@@ -55,9 +65,10 @@ export default function SalaryPromptModal({ isOpen, onSave }: Props) {
 
                     <span className={`text-red-500 text-sm ${!error && "invisible"}`}>{error || "default"}</span>
                 </fieldset>
-
-                <button type="submit" className="w-full mt-1">Salvar</button>
+                <div className="mt-1 flex justify-end">
+                    <button type="submit" className="button w-1/4">Salvar</button>
+                </div>
             </form>
-        </ModalDialog >
+        </Dialog >
     </>
 }

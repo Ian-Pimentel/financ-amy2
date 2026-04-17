@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import useExpenseMutation from "./hooks/useExpenseMutation";
 import useYear from "../year/hooks/useYear";
+import { PLUS_UNICODE } from "@/shared/constants";
 
 type Props = {
     monthIdx: number;
@@ -42,7 +43,7 @@ export default function AddExpense({ monthIdx }: Props) {
 
     return <>
         <form onSubmit={handleCreate} className="contents">
-            <div className={"flex p-1 " + (borders && "border-(--table-color) border-r border-b")}>
+            <div className={"flex p-1 " + (borders && "border-(--light-border-color) border-r border-b")}>
                 <input
                     ref={nameInputRef}
                     className="w-full h-full"
@@ -69,7 +70,7 @@ export default function AddExpense({ monthIdx }: Props) {
                     />
                 </span>
             </div>
-            <span className={"p-1 flex items-center before:content-['R$_'] before:text-(--hint-color) " + (borders && "border-(--table-color) border-b border-r")}>
+            <span className={"p-1 flex items-center before:content-['R$_'] before:text-(--hint-color) " + (borders && "border-(--light-border-color) border-b border-r")}>
                 <input
                     className="text-right w-full h-full"
                     type="number"
@@ -82,8 +83,8 @@ export default function AddExpense({ monthIdx }: Props) {
                     onChange={(ev) => setValue(ev.target.value)}
                 />
             </span>
-            <span className={"p-1 flex justify-center items-center " + (borders && "border-(--table-color) border-b")}>
-                <button type="submit" className="cursor-pointer w-1/2"><span>+</span></button>
+            <span className={"p-1 flex justify-center items-center " + (borders && "border-(--light-border-color) border-b")}>
+                <button type="submit" className="cursor-pointer w-1/2">➕</button>
             </span>
         </form>
     </>

@@ -3,21 +3,24 @@
 @layer base {
   :root {
     /* css é MUITO legal */
-    --theme-color: #ff00dd;
+    --original-theme-color: #110e0b;
+    --theme-color: var(--original-theme-color);
 
     --bg-color: hsl(from var(--theme-color) h calc(s * 0.5) 10%);
 
-    --font-color: hsl(from var(--theme-color) h calc(s * 0.8) 90%);
+    --font-color: hsl(from var(--theme-color) h calc(s * 0.8) 85%);
 
-    --hint-color: hsl(from var(--font-color) h s l / 0.7);
-    --table-color: hsl(from var(--font-color) h s l / 0.3);
+    --hint-color: hsl(from var(--font-color) h s l / 0.5);
+    --light-border-color: hsl(from var(--font-color) h s l / 0.3);
+
+    --red: rgb(255,0,0);
   }
 
   body {
     @apply 
       min-w-[320px]
       min-h-screen 
-      relative m-0 
+      relative p-0 m-0 
       bg-(--bg-color);
   }
 
@@ -25,8 +28,27 @@
     @apply text-(--font-color) ;
   }
 
-  dialog[open] {
+  dialog {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  dialog.modal {
     margin: auto;
+  }
+
+  dialog.top-left {
+    margin: 0;
+    margin-right: auto;
+  }
+  dialog.top-right {
+    margin: 0;
+    margin-left: auto;
+  }
+
+  dialog::backdrop {
+    background-color: hsl(from var(--bg-color) h s l / 20%);
+    @apply backdrop-blur-xs;
   }
 
   

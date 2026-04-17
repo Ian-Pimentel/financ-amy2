@@ -21,6 +21,31 @@ const db = new Dexie(EXPENSE_DB_NAME) as Dexie & {
     expenses: EntityTable<ExpenseDB, "id", InsertExpense>
 };
 
+// Usar isso aqui para fazer a validação ao invés do hooks?
+// db.use({
+//     stack: "dbcore",
+//     name: "MyMiddleware",
+//     create(downlevelDatabase) {
+//         return {
+//             ...downlevelDatabase,
+//             table(tableName) {
+//                 const downlevelTable = downlevelDatabase.table(tableName);
+//                 return {
+//                     ...downlevelTable,
+//                     query(req) {
+//                         // console.log(`Querying ${tableName}`, req);
+//                         return downlevelTable.query(req);
+//                     },
+//                     mutate(req) {
+//                         console.log(`Mutating ${tableName}`, req);
+//                         return downlevelTable.mutate(req);
+//                     }
+//                 };
+//             }
+//         };
+//     }
+// });
+
 db.version(1).stores({
     expenses: "++id, [year+monthIdx], date, name, value, category",
 });
