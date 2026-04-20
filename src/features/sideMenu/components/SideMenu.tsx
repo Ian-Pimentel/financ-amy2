@@ -6,6 +6,7 @@ import ToggleButton from "@/shared/components/ToggleButton";
 import { useToggle } from "usehooks-ts";
 import MenuItem from "./MenuItem";
 import { db } from "@/shared/dexieDB";
+import CategoriesModal from "@/features/categories/components/CategoriesModal";
 
 export default function SideMenu() {
     const [isMenuOpen, toggleMenuIsOpen] = useToggle(false);
@@ -13,6 +14,7 @@ export default function SideMenu() {
     //MODAIS
     const [isThemeModalOpen, toggleThemeModal] = useToggle(false);
     const [isSalaryModalOpen, toggleSalaryModal] = useToggle(false);
+    const [isCategoriesModalOpen, toggleCategoriesModal] = useToggle(false);
 
     const clearAllData = async () => {
         await db.delete({ disableAutoOpen: false });
@@ -42,6 +44,7 @@ export default function SideMenu() {
 
                 <div className="p-1">
                     <ul className="*:last:border-none">
+                        <MenuItem title="Categorias" action={toggleCategoriesModal} />
                         <MenuItem title="Mudar Tema" action={toggleThemeModal} />
                         <MenuItem title="Alterar Salário" action={toggleSalaryModal} />
                         <MenuItem title="Apagar Dados" action={handleClearData} />
@@ -63,6 +66,11 @@ export default function SideMenu() {
                 toggleSalaryModal();
             }}
             onCancel={toggleSalaryModal}
+        />
+
+        <CategoriesModal
+            isOpen={isCategoriesModalOpen}
+            toggleIsOpen={toggleCategoriesModal}
         />
     </>;
 }

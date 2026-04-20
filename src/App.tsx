@@ -9,13 +9,11 @@ import CategoriesDatalist from "./features/categories/components/CategoriesDatal
 import SideMenu from "./features/sideMenu/components/SideMenu";
 
 
-
 export function App() {
   const [baseSalary, setBaseSalary] = useBaseSalary();
   const [year, setYear] = useYear();
 
   const needsSalary = baseSalary <= 0;
-
 
   return <>
     {needsSalary &&
@@ -31,13 +29,14 @@ export function App() {
       <div />
     </header>
 
+    <main>
+      {MONTHS.map((month, monthIdx) => {
+        return <MonthWrapper key={month} month={month} monthIdx={monthIdx} />
+      })}
+      <CategoriesDatalist />
+    </main>
 
 
-    {MONTHS.map((month, monthIdx) => {
-      return <MonthWrapper key={month} month={month} monthIdx={monthIdx} />
-    })}
-
-    <CategoriesDatalist />
   </>;
 }
 

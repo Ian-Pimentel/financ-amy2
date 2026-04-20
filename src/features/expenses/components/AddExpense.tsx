@@ -2,13 +2,19 @@ import { useRef, useState } from "react"
 import useExpenseMutation from "../hooks/useExpenseMutation";
 import useYear from "../../year/hooks/useYear";
 import MonetaryInput from "@/shared/components/MonetaryInput";
+import useCategoryQuery from "@/features/categories/hooks/useCategoryQuery";
+import uniqolor from "uniqolor";
+import { db } from "@/shared/dexieDB";
 
 type Props = {
     monthIdx: number;
 }
 
+const mapExpenseCategory = async (expenseId: number, categoryId: number) => await db.expenseCategory.add({ expenseId, categoryId });
+
 export default function AddExpense({ monthIdx }: Props) {
     const { createExpense } = useExpenseMutation();
+    const { getCategoryByName, addCategory } = useCategoryQuery();
 
     const [year] = useYear();
 
@@ -29,19 +35,31 @@ export default function AddExpense({ monthIdx }: Props) {
     const handleCreate = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
 
-        await createExpense({
+        let categId = (await getCategoryByName(name))?.id;
+
+        if (categId === undefined) {
+            const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
+
+            categId = await addCategory({
+                name: category,
+                color: color.color
+            });
+        }
+
+        const expenseId = await createExpense({
             name: name,
-            category: category,
             value: value,
             date: new Date(year, monthIdx)
         });
+
+        await mapExpenseCategory(expenseId, categId!);
 
         clearForm();
     }
 
     return <>
-        <form onSubmit={handleCreate} className="contents">
-            <div className="flex p-1 border-(--light-border-color) border-r border-b">
+        <form onSubmit={handleCreate} className="contents *:border-(--light-border-color) *:border-[0_1_1_1]">
+            <div className="flex p-1">
                 <input value={name}
                     ref={nameInputRef}
                     className="w-full h-full"
@@ -66,15 +84,13 @@ export default function AddExpense({ monthIdx }: Props) {
                     />
                 </span>
             </div>
-            <span className="*:h-full border-(--light-border-color) border-b border-r">
-                <MonetaryInput amount={value}
-                    alignRight required
-                    onChange={setValue}
-                />
-            </span>
-            <span className="p-1 flex justify-center items-center border-(--light-border-color) border-b">
-                <button type="submit" className="cursor-pointer">➕</button>
-            </span>
+            <MonetaryInput value={value}
+                alignRight required
+                setValue={setValue}
+            />
+            <input type="submit" className="cursor-pointer hidden" value="➕" />
+            {/* <span className="p-1 flex justify-center items-center border-(--light-border-color) border-b">
+            </span> */}
         </form>
     </>
 }

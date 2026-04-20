@@ -1,7 +1,28 @@
 import type { MonthIndices } from "@/types";
-import { Dexie, type EntityTable } from "dexie";
+import { Dexie, type EntityTable, type Table, type TransactionMode } from "dexie";
 
 const EXPENSE_DB_NAME = "ExpensesDB";
+
+type Expense = {
+    id: number,
+    year: number,
+    monthIdx: MonthIndices,
+    date: Date,
+    name: string,
+    value: number,
+};
+
+type Category = {
+    id: number,
+    name: string,
+
+    color: string
+}
+
+type ExpenseCategory = {
+    expenseId: number,
+    categoryId: number,
+}
 
 type MonthSalary = {
     id: number,
@@ -11,24 +32,14 @@ type MonthSalary = {
     salary: number,
 };
 
-type Expense = {
-    id: number,
-    date: Date,
-    name: string,
-    value: number,
-    category: string,
-};
-
-type ExpenseDB = Expense & {
-    year: number;
-    monthIdx: MonthIndices;
-};
-
-type InsertExpense = Omit<Expense, 'id'>;
+type InsertExpense = Omit<Expense, 'id' | 'year' | 'monthIdx'>;
+type InsertCategory = Omit<Category, 'id'>;
 type InsertMonthSalary = Omit<MonthSalary, 'id'>;
 
 const db = new Dexie(EXPENSE_DB_NAME) as Dexie & {
-    expenses: EntityTable<ExpenseDB, "id", InsertExpense>,
+    expenses: EntityTable<Expense, "id", InsertExpense>,
+    categories: EntityTable<Category, "id", InsertCategory>,
+    expenseCategory: EntityTable<ExpenseCategory>
     monthSalaries: EntityTable<MonthSalary, "id", InsertMonthSalary>,
 };
 
@@ -59,7 +70,10 @@ const db = new Dexie(EXPENSE_DB_NAME) as Dexie & {
 
 db.version(1).stores({
     expenses: "++id, [year+monthIdx], date, name, value, category",
-    monthSalaries: "++id, [year+monthIdx], salary"
+    categories: "++id, &name",
+    expenseCategory: "  [expenseId+categoryId], [categoryId+expenseId], expenseId, categoryId",
+
+    monthSalaries: "++id, [year+monthIdx], salary",
 });
 
 // lambda nn tem acesso aos callbacks, pois nn herda o this.
@@ -92,8 +106,8 @@ export function getExpensesCollection(year?: number, monthIdx?: number) {
 
 export type {
     MonthSalary,
-    Expense,
-    InsertExpense,
+    Expense, Category,
+    InsertExpense, InsertCategory,
     InsertMonthSalary
 }
 export { db }

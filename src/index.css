@@ -3,7 +3,7 @@
 @layer base {
   :root {
     /* css é MUITO legal */
-    --original-theme-color: #1d1207;
+    --original-theme-color: #a9631e;
     --theme-color: var(--original-theme-color);
 
     --bg-color: hsl(from var(--theme-color) h calc(s * 0.5) 10%);
@@ -21,6 +21,10 @@
     touch-action: manipulation;
   }
 
+  * {
+    @apply text-(--font-color) ;
+  }
+
   body {
     @apply 
       min-w-[320px]
@@ -29,13 +33,37 @@
       bg-(--bg-color);
   }
 
-  * {
-    @apply text-(--font-color) ;
+  input::placeholder {
+    @apply text-(--hint-color)
   }
 
   dialog {
     max-width: 100vw;
     max-height: 100vh;
+  }
+
+  dialog::backdrop {
+    background-color: hsl(from var(--bg-color) h s l / 20%);
+    @apply backdrop-blur-xs;
+  }
+}
+
+@layer utilities {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    @apply appearance-none;
+  }
+
+  .button {
+    @apply border rounded-md p-1 cursor-pointer block min-w-fit;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   dialog.modal {
@@ -49,27 +77,5 @@
   dialog.top-right {
     margin: 0;
     margin-left: auto;
-  }
-
-  dialog::backdrop {
-    background-color: hsl(from var(--bg-color) h s l / 20%);
-    @apply backdrop-blur-xs;
-  }
-
-  
-}
-
-@layer utilities {
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    @apply appearance-none;
-  }
-
-  input::placeholder {
-    @apply text-(--hint-color)
-  }
-
-  .button {
-    @apply border rounded p-1 cursor-pointer block min-w-fit;
   }
 }

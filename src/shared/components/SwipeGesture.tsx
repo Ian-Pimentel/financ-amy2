@@ -1,0 +1,86 @@
+import { useEffect, useRef } from "react";
+import { useIntersectionObserver, type UseIntersectionObserverOptions, } from "usehooks-ts";
+
+type Props = {
+    rightElement?: React.ReactNode;
+    leftElement?: React.ReactNode;
+    onSwipeLeft?: () => void;
+    onSwipeRight?: () => void;
+} & React.PropsWithChildren
+
+export default function SwipeWrapper({ rightElement, leftElement, onSwipeLeft, onSwipeRight, children }: Props) {
+    if (!rightElement && !leftElement) throw Error('At least one Swipe Element must be defined.');
+
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    const shouldHoldLeft = onSwipeLeft === undefined;
+    const shouldHoldRight = onSwipeRight === undefined;
+
+    const isLeftVisible = useRef(false);
+    const isRightVisible = useRef(false);
+
+    const scrollToContent = () => {
+        contentRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    const handleScrollEnd = () => {
+        const shouldSwipeLeft = !shouldHoldLeft && isLeftVisible.current;
+        const shouldSwipeRight = !shouldHoldRight && isRightVisible.current;
+
+        if (shouldSwipeLeft || shouldSwipeRight) {
+            if (shouldSwipeLeft && onSwipeLeft) onSwipeLeft();
+            if (shouldSwipeRight && onSwipeRight) onSwipeRight();
+            scrollToContent();
+        }
+    }
+
+    useEffect(() => {
+        if (!contentRef.current) return;
+        contentRef.current.scrollIntoView({ behavior: "instant" });
+    }, []);
+
+    return (
+        <div
+            onScrollEnd={handleScrollEnd}
+            className="
+                @container flex 
+                overflow-y-hidden
+                overflow-x-scroll scroll-smooth snap-x snap-proximity overscroll-none no-scrollbar
+                *:snap-always
+                *:first:snap-start *:last:snap-end
+                *:first:tab-index
+            "
+        >
+            {shouldHoldLeft ?
+                <div className="flex-[0_0_fit-content]" tabIndex={-1}>{leftElement}</div> :
+                <SwipeAction onVisibilityChange={(visible) => { isLeftVisible.current = visible }} options={{ threshold: 1 }}>
+                    {leftElement}
+                </SwipeAction>
+            }
+
+            <div ref={contentRef} onClick={scrollToContent} className="flex-[0_0_100cqw] snap-center">{children}</div>
+
+            {shouldHoldRight ?
+                <div className="flex-[0_0_fit-content]" tabIndex={-1}>{rightElement}</div> :
+                <SwipeAction onVisibilityChange={(visible) => { isRightVisible.current = visible }} options={{ threshold: 1 }}>
+                    {rightElement}
+                </SwipeAction>
+            }
+        </div>
+    );
+}
+
+type SwipeActionProps = {
+    onVisibilityChange: (isVisible: boolean) => void;
+    options?: UseIntersectionObserverOptions;
+} & React.PropsWithChildren;
+
+export function SwipeAction({ onVisibilityChange, children, options }: SwipeActionProps) {
+    const { ref, isIntersecting } = useIntersectionObserver(options);
+
+    useEffect(() => {
+        onVisibilityChange(isIntersecting);
+    }, [isIntersecting, onVisibilityChange]);
+
+    return <div ref={ref} className="flex-[0_0_fit-content]">{children}</div>
+}

@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialValue, title }: Props) {
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState(initialValue || 0);
     const [error, setError] = useState('');
 
     const dismissable = initialValue !== undefined;
@@ -42,22 +42,27 @@ export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialV
 
     return <>
         <Dialog isOpen={isOpen} dismissable={dismissable} onCancel={onCancel}>
-            <form onSubmit={handleSubmit} className="bg-(--bg-color) p-2 rounded-xl border w-[80vw] md:w-[40vw] lg:w-[30vw]">
-                <h2 className="text-xl mb-2">{title || "Insira seu salário"}</h2>
-                <fieldset>
-                    <div className="button focus-within:border-(--focus-color)">
-                        <MonetaryInput amount={amount} onChange={setAmount} onBlur={validateValue} required />
-                    </div>
-                    <span className={`text-red-500 text-sm ${!error && "invisible"}`}>{error || "default"}</span>
-                </fieldset>
+            <div className="bg-(--bg-color) p-2 rounded-xl border w-[80vw] md:w-[40vw] lg:w-[30vw]">
+                <header className="text-xl font-semibold mb-2">
+                    {title || "Insira seu salário"}
+                </header>
 
-                <div className="mt-1 flex justify-between">
+                <form onSubmit={handleSubmit} id="set-salary-form">
+                    <fieldset>
+                        <div className="button focus-within:border-(--focus-color)">
+                            <MonetaryInput value={amount} setValue={setAmount} onBlur={validateValue} required />
+                        </div>
+                        <span className={`text-red-500 text-sm ${!error && "invisible"}`}>{error || "default"}</span>
+                    </fieldset>
+                </form>
+
+                <footer className="mt-1 flex justify-between">
                     {dismissable &&
                         <button type="button" className="button w-1/4" onClick={onCancel}>Cancelar</button>
                     }
-                    <button type="submit" className="button w-1/4 ml-auto">Salvar</button>
-                </div>
-            </form>
+                    <input type="submit" form="set-salary-form" className="button w-1/4 ml-auto" value="Salvar" />
+                </footer>
+            </div>
         </Dialog >
     </>
 }

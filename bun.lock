@@ -5,18 +5,19 @@
     "": {
       "name": "bun-react-template",
       "dependencies": {
-        "bun-plugin-tailwind": "^0.1.2",
         "dexie": "^4.4.2",
         "dexie-react-hooks": "^4.4.0",
-        "react": "^19",
-        "react-dom": "^19",
-        "tailwindcss": "^4.1.11",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
+        "tailwindcss": "^4.2.2",
+        "uniqolor": "^1.1.1",
         "usehooks-ts": "^3.1.1",
       },
       "devDependencies": {
         "@types/bun": "latest",
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "bun-plugin-tailwind": "^0.1.2",
       },
     },
   },
@@ -76,6 +77,8 @@
     "tailwindcss": ["tailwindcss@4.2.2", "", {}, "sha512-KWBIxs1Xb6NoLdMVqhbhgwZf2PGBpPEiwOqgI4pFIYbNTfBXiKYyWoTsXgBQ9WFg/OlhnvHaY+AEpW7wSmFo2Q=="],
 
     "undici-types": ["undici-types@7.19.2", "", {}, "sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg=="],
+
+    "uniqolor": ["uniqolor@1.1.1", "", {}, "sha512-HUwezlXCwm5bzsEXW7AP7ybezH13uWENRgYT+3dOdhJPvpYucSqvIGckMiLn+Uy2j0NVf3fPp43uZ4aun3t4Ww=="],
 
     "usehooks-ts": ["usehooks-ts@3.1.1", "", { "dependencies": { "lodash.debounce": "^4.0.8" }, "peerDependencies": { "react": "^16.8.0  || ^17 || ^18 || ^19 || ^19.0.0-rc" } }, "sha512-I4diPp9Cq6ieSUH2wu+fDAVQO43xwtulo+fKEidHUwZPnYImbtkTjzIJYcDcJqxgmX31GVqNFURodvcgHcW0pA=="],
   }

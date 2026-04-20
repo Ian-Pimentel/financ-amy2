@@ -1,22 +1,13 @@
-import { useEffect, useState } from "react";
-
 type Props = {
-    amount: number;
+    value: number;
     required?: boolean;
-    onChange: (value: number) => void;
+    setValue: (value: number) => void;
     onBlur?: (value: number) => void;
     currency?: string;
     alignRight?: boolean;
 }
 
-export default function MonetaryInput({ amount, required = false, onChange, onBlur, currency = "R$", alignRight = false }: Props) {
-
-    const handleChange = (ev: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
-        const value = ev.target.valueAsNumber
-        if (!Number.isNaN(value)) {
-            onChange(value);
-        };
-    }
+export default function MonetaryInput({ value, required = false, setValue, onBlur, currency = "R$", alignRight = false }: Props) {
 
     return <>
         <label className="flex items-center ">
@@ -27,11 +18,11 @@ export default function MonetaryInput({ amount, required = false, onChange, onBl
                 min={1}
                 step={0.01}
 
-                value={Number.isNaN(amount) ? (required ? 0 : '') : amount}
-                onChange={handleChange}
+                value={value}
+                onChange={ev => setValue(ev.target.valueAsNumber)}
                 placeholder="1500.00"
 
-                className={"outline-none min-w-0 " + (alignRight && "text-right")}
+                className={"outline-none min-w-0 flex-1 " + (alignRight && "text-right")}
                 onBlur={onBlur ? (ev) => onBlur(ev.target.valueAsNumber) : undefined}
                 required={required}
             />

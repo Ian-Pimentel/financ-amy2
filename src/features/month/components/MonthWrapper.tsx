@@ -1,5 +1,4 @@
 import type { Month, MonthIndices } from "@/types";
-import { useState } from "react";
 import useBaseSalary from "../../salary/hooks/useBaseSalary";
 import useYear from "../../year/hooks/useYear";
 import ExpenseList from "../../expenses/components/ExpenseList";
@@ -9,7 +8,9 @@ import { useToggle } from "usehooks-ts";
 import MonetaryPromptModal from "@/shared/components/MonetaryPromptModal";
 import useMonthSalaryQuery from "@/features/salary/hooks/useMonthSalaryQuery";
 import useMonthSalaryMutation from "@/features/salary/hooks/useMonthSalaryMutation";
-import { MONTHS } from "@/shared/constants";
+import GridRow from "@/shared/components/GridRow";
+import AddExpense from "@/features/expenses/components/AddExpense";
+import ExpensesTotal from "@/features/expenses/components/ExpensesTotal";
 
 type Props = {
     month: Month;
@@ -52,20 +53,30 @@ export default function MonthWrapper({ month, monthIdx }: Props) {
         toggleSalaryModal();
     }
 
-    monthSalary && console.log(monthSalary.year, MONTHS[monthSalary.monthIdx], monthSalary.salary);
+    // monthSalary && console.log(monthSalary.year, MONTHS[monthSalary.monthIdx], monthSalary.salary);
 
     return <>
-        <div>
-            <div tabIndex={0} className="flex cursor-pointer" onClick={toggleOpen} onKeyUp={handleOpen}>
-                <div className={`${open && "rotate-90"}`}>{">"}</div>
-                <div className='grow'>{month}</div>
-                <span onClick={toggleSalaryModal}>
+        <div className={`${open && "my-1"}`}>
+            <div tabIndex={0} className="flex cursor-pointer!" onClick={toggleOpen} onKeyUp={handleOpen}>
+                <div className={`mr-1 ${open && "rotate-90"}`}>{">"}</div>
+                <div className={`grow ${open && "text-xl font-semibold"}`} >{month}</div>
+                <span onClick={(ev) => { ev.stopPropagation(); toggleSalaryModal() }}>
                     <MonetaryDisplay amount={totalSaved} />
                 </span>
             </div>
-            {open && <ExpenseList expenses={expenses} monthIdx={monthIdx} />}
-        </div>
+            {open &&
+                <div className="md:px-4 lg:px-8">
+                    <ExpenseList expenses={expenses} monthIdx={monthIdx} />
+                    <GridRow>
+                        <AddExpense monthIdx={monthIdx} />
+                    </GridRow>
+                    <GridRow>
+                        <ExpensesTotal total={totalSpent} />
+                    </GridRow>
+                </div>
+            }
 
-        <MonetaryPromptModal isOpen={isSalaryModalOpen} onSave={handlePutMonthSalary} initialValue={salary} onCancel={toggleSalaryModal} title={`Salário no mês de ${monthName}`} />
+            <MonetaryPromptModal isOpen={isSalaryModalOpen} onSave={handlePutMonthSalary} initialValue={salary} onCancel={toggleSalaryModal} title={`Salário no mês de ${monthName}`} />
+        </div>
     </>
 }

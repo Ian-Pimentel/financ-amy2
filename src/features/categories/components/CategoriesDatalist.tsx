@@ -1,11 +1,11 @@
-import useCategories from "../hooks/useCategories";
+import useCategoryQuery from "../hooks/useCategoryQuery";
 
 export default function CategoriesDatalist() {
-    const categories = useCategories();
+    const { categories } = useCategoryQuery();
 
     return <>
         <datalist id="categories-list">
-            {categories.map((categ, idx) => <option key={`category-${idx}`} value={categ} />)}
+            {categories?.map(categ => <option key={`category-${categ.id}`} value={categ.name} />)}
         </datalist>
     </>
 }

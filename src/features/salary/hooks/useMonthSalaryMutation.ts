@@ -8,7 +8,7 @@ export default function useMonthSalaryMutation() {
 
     const editMonthSalary = async (ms: MonthSalary) => {
         const { id, ...changes } = ms;
-        return await db.monthSalaries.update(ms.id, changes);
+        return await db.monthSalaries.update(id, changes);
     }
 
     const deleteMonthSalary = async (id: number) => await db.monthSalaries.delete(id);
