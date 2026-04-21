@@ -19,11 +19,11 @@ export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialV
     const clearComponent = () => {
         setError('');
         setAmount(initialValue || 0);
-    }
+    };
 
     useEffect(() => {
         if (isOpen) clearComponent();
-    }, [isOpen])
+    }, [isOpen]);
 
     const validateValue = (value: number) => {
         if (value < 1) {
@@ -31,7 +31,7 @@ export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialV
             return false;
         }
         setError('');
-        return true
+        return true;
     }
 
     const handleSubmit = (ev: React.SubmitEvent) => {
@@ -42,7 +42,7 @@ export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialV
 
     return <>
         <Dialog isOpen={isOpen} dismissable={dismissable} onCancel={onCancel}>
-            <div className="bg-(--bg-color) p-2 rounded-xl border w-[80vw] md:w-[40vw] lg:w-[30vw]">
+            <div className="bg-(--bg-color) p-2">
                 <header className="text-xl font-semibold mb-2">
                     {title || "Insira seu salário"}
                 </header>

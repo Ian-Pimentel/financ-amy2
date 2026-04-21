@@ -1,7 +1,7 @@
-import useCategoryQuery from "../hooks/useCategoryQuery";
+import useCategoryQuery from "../hooks/useCategory";
 
 export default function CategoriesDatalist() {
-    const { categories } = useCategoryQuery();
+    const categories = useCategoryQuery();
 
     return <>
         <datalist id="categories-list">

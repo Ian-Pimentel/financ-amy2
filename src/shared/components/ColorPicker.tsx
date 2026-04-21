@@ -21,12 +21,12 @@ export default function ColorPicker({ color, onChange, title = true, rtl = false
                 <input
                     type="color" autoFocus={autoFocus}
                     name="theme-picker"
-                    className="w-0 h-0 outline-none"
+                    className="w-0 h-0 invisible"
                     value={color} onChange={(ev) => onChange(ev.target.value)}
                 />
-
                 {label}
             </span>
+
         </label>
     </>;
 }

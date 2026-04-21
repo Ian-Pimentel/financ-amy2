@@ -28,6 +28,9 @@ export default function SwipeWrapper({ rightElement, leftElement, onSwipeLeft, o
         const shouldSwipeRight = !shouldHoldRight && isRightVisible.current;
 
         if (shouldSwipeLeft || shouldSwipeRight) {
+            isLeftVisible.current = false;
+            isRightVisible.current = false;
+
             if (shouldSwipeLeft && onSwipeLeft) onSwipeLeft();
             if (shouldSwipeRight && onSwipeRight) onSwipeRight();
             scrollToContent();
@@ -35,8 +38,7 @@ export default function SwipeWrapper({ rightElement, leftElement, onSwipeLeft, o
     }
 
     useEffect(() => {
-        if (!contentRef.current) return;
-        contentRef.current.scrollIntoView({ behavior: "instant" });
+        contentRef.current?.scrollIntoView({ behavior: "instant" });
     }, []);
 
     return (
@@ -45,7 +47,7 @@ export default function SwipeWrapper({ rightElement, leftElement, onSwipeLeft, o
             className="
                 @container flex 
                 overflow-y-hidden
-                overflow-x-scroll scroll-smooth snap-x snap-proximity overscroll-none no-scrollbar
+                overflow-x-scroll scroll-smooth snap-x snap-proximity overscroll-none! no-scrollbar
                 *:snap-always
                 *:first:snap-start *:last:snap-end
                 *:first:tab-index
@@ -83,4 +85,10 @@ export function SwipeAction({ onVisibilityChange, children, options }: SwipeActi
     }, [isIntersecting, onVisibilityChange]);
 
     return <div ref={ref} className="flex-[0_0_fit-content]">{children}</div>
+}
+
+export function SwipeDelete({ onDelete }: { onDelete?: () => void }) {
+    return <>
+        <div onClick={onDelete} className="bg-red-600 h-full w-32 flex items-center justify-center">🗑️</div>
+    </>
 }

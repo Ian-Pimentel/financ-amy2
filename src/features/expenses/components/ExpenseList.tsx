@@ -1,12 +1,13 @@
-import type { Expense } from "@/shared/dexieDB";
+import type { Expense } from "@/db/dexieDB";
 import ExpenseItem from "./ExpenseItem";
 import GridRow from "@/shared/components/GridRow";
-import SwipeWrapper from "@/shared/components/SwipeGesture";
-import useExpenseMutation from "../hooks/useExpenseMutation";
+import SwipeWrapper from "@/shared/components/SwipeWrapper";
+import { useToggle } from "usehooks-ts";
+import MapExpenseCategoryModal from "@/features/categories/components/MapExpenseCategoryModal";
+import { deleteExpense } from "@/db/repositories/ExpenseRepository";
 
 type Props = {
     expenses: Expense[]
-    monthIdx: number
 };
 
 export function SwipeDelete({ onDelete }: { onDelete: () => void }) {
@@ -15,19 +16,21 @@ export function SwipeDelete({ onDelete }: { onDelete: () => void }) {
     </>
 }
 
-export function SwipeItemActions() {
+export function SwipeItemActions({ expense }: { expense: Expense }) {
+    // MODAIS
+    const [isCategorySelectModalOpen, toggleCategorySelectModalOpen] = useToggle(false);
+
     return <>
         <div className="flex h-full w-16 justify-center items-center border-(--light-border-color) border-b">
-            <button type="button" className="inline-block cursor-pointer text-xl" onClick={() => console.log('adicionar categoria')}>
+            <button type="button" className="inline-block cursor-pointer text-xl" onClick={toggleCategorySelectModalOpen}>
                 🏷️
             </button>
         </div>
+        <MapExpenseCategoryModal isOpen={isCategorySelectModalOpen} toggleIsOpen={toggleCategorySelectModalOpen} expense={expense} />
     </>;
 }
 
-export default function ExpenseList({ expenses, monthIdx }: Props) {
-    const { deleteExpense } = useExpenseMutation();
-
+export default function ExpenseList({ expenses }: Props) {
     return <>
         <div>
             <GridRow>
@@ -39,13 +42,15 @@ export default function ExpenseList({ expenses, monthIdx }: Props) {
                 <SwipeWrapper key={exp.id}
                     leftElement={<SwipeDelete onDelete={() => deleteExpense(exp.id)} />}
                     onSwipeLeft={() => deleteExpense(exp.id)}
-                    rightElement={<SwipeItemActions />}
+                    rightElement={<SwipeItemActions expense={exp} />}
                 >
                     <GridRow>
                         <ExpenseItem expense={exp} />
                     </GridRow>
                 </SwipeWrapper>
             )}
+
+
         </div>
     </>;
 }

@@ -1,43 +1,68 @@
 import Dialog from "@/shared/components/Dialog";
-import useCategoryQuery from "../hooks/useCategoryQuery";
 import uniqolor from 'uniqolor';
 import ColorPicker from "@/shared/components/ColorPicker";
 import { useEffect, useRef, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
+import ErrorMessage from "@/shared/components/ErrorMessage";
+import SwipeWrapper, { SwipeDelete } from "@/shared/components/SwipeWrapper";
+import useExpenseCategoryQuery from "@/features/expenseCategory/useExpenseCategory";
+import useCategoryQuery from "../hooks/useCategory";
+import { addCategory, deleteCategory, getCategoryByName, updateCategory } from "@/db/repositories/CategoryRepository";
+import Dexie from "dexie";
 
 type Props = {
     isOpen: boolean;
     toggleIsOpen: () => void;
 }
 
-export default function CategoriesModal({ isOpen, toggleIsOpen }: Props) {
-    const { categories, addCategory, editCategory, error } = useCategoryQuery();
-    const debounced = useDebounceCallback(editCategory, 200)
+export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) {
+    const [error, setError] = useState('');
+
+    const categories = useCategoryQuery();
+    const debounced = useDebounceCallback(updateCategory, 200);
 
     const [name, setName] = useState('');
     const nameInputRef = useRef<HTMLInputElement>(null);
 
     const handleSubmit = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
-        const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
-        addCategory({ name: name, color: color.color });
 
+        const exists = (await getCategoryByName(name)) !== undefined;
+
+        if (exists) {
+            setError(`Categoria ${name} já existe.`);
+            return;
+        }
+
+        const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
+        await addCategory({ name: name, color: color.color });
+
+        setError('');
         setName('');
         nameInputRef.current?.focus();
     }
 
-    const handleCancel = () => {
-        setName('');
-        toggleIsOpen();
-    }
+    const handleDelete = (id: number) => {
+        console.log('init delete');
+        if (window.confirm('Certeza O.o? Isso vai desvincular TODOS os gastos com esta categoria.')) {
+            deleteCategory(id);
+            console.log('deleted sucessfully');
+            return;
+        }
+        console.log('delete canceled');
+    };
 
     useEffect(() => {
-        nameInputRef.current?.focus();
+        if (isOpen) {
+            setName('');
+            setError('');
+            nameInputRef.current?.focus();
+        }
     }, [isOpen]);
 
     return <>
-        <Dialog isOpen={isOpen} onCancel={handleCancel} dismissable>
-            <div className="bg-(--bg-color) w-[90vw] md:w-[50vw] lg:w-[40vw] p-2 rounded-xl border">
+        <Dialog isOpen={isOpen} onCancel={toggleIsOpen} dismissable>
+            <div className="bg-(--bg-color) p-2">
                 <header className="text-xl font-semibold mb-2">
                     Categorias cadastradas
                 </header>
@@ -45,7 +70,9 @@ export default function CategoriesModal({ isOpen, toggleIsOpen }: Props) {
                 <ul className="flex flex-col gap-1">
                     {categories?.map(category =>
                         <li key={category.id}>
-                            <ColorPicker rtl title={category.name} color={category.color} onChange={(color) => debounced({ ...category, color: color })} />
+                            <SwipeWrapper leftElement={<SwipeDelete />} onSwipeLeft={() => handleDelete(category.id)}>
+                                <ColorPicker rtl title={category.name} color={category.color} onChange={(color) => debounced({ ...category, color: color })} />
+                            </SwipeWrapper>
                         </li>
                     )}
                 </ul>
@@ -69,10 +96,11 @@ export default function CategoriesModal({ isOpen, toggleIsOpen }: Props) {
                     <input type="submit" form="add-category-form" className="button" value="➕" />
                 </form>
                 <footer className="mt-2">
-                    {error && <span className="text-red-600 line-clamp-1">{error}</span>}
+                    {error && <ErrorMessage message={error} />}
                     <button type="button" className="button ml-auto" onClick={toggleIsOpen}>Fechar</button>
                 </footer>
             </div>
         </Dialog>
     </>
-} 
+}
+

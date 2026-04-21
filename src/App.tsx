@@ -7,6 +7,7 @@ import { MONTHS } from "./shared/constants";
 import MonthWrapper from "./features/month/components/MonthWrapper";
 import CategoriesDatalist from "./features/categories/components/CategoriesDatalist";
 import SideMenu from "./features/sideMenu/components/SideMenu";
+import Notes from "./features/notes/components/Notes";
 
 
 export function App() {
@@ -34,10 +35,12 @@ export function App() {
         return <MonthWrapper key={month} month={month} monthIdx={monthIdx} />
       })}
       <CategoriesDatalist />
+
+      <Notes />
     </main>
-
-
   </>;
 }
+
+
 
 export default App;

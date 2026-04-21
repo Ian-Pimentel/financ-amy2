@@ -8,10 +8,9 @@ type Props = {
 }
 
 export default function MonetaryInput({ value, required = false, setValue, onBlur, currency = "R$", alignRight = false }: Props) {
-
     return <>
-        <label className="flex items-center ">
-            <span className="text-(--hint-color) mx-1">{currency}</span>
+        <label className="flex items-center">
+            <span className="text-(--hint-color)">{currency}</span>
             <input
                 type="number"
 

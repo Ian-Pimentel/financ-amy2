@@ -2,15 +2,15 @@ import type { Month, MonthIndices } from "@/types";
 import useBaseSalary from "../../salary/hooks/useBaseSalary";
 import useYear from "../../year/hooks/useYear";
 import ExpenseList from "../../expenses/components/ExpenseList";
-import useExpenseQuery from "../../expenses/hooks/useExpenseQuery";
+import useExpenseQuery from "../../expenses/hooks/useExpense";
 import MonetaryDisplay from "@/shared/components/MonetaryDisplay";
 import { useToggle } from "usehooks-ts";
 import MonetaryPromptModal from "@/shared/components/MonetaryPromptModal";
 import useMonthSalaryQuery from "@/features/salary/hooks/useMonthSalaryQuery";
-import useMonthSalaryMutation from "@/features/salary/hooks/useMonthSalaryMutation";
 import GridRow from "@/shared/components/GridRow";
 import AddExpense from "@/features/expenses/components/AddExpense";
 import ExpensesTotal from "@/features/expenses/components/ExpensesTotal";
+import { addMonthSalary, putMonthSalary } from "@/db/repositories/monthSalaryRepository";
 
 type Props = {
     month: Month;
@@ -19,14 +19,13 @@ type Props = {
 
 export default function MonthWrapper({ month, monthIdx }: Props) {
     const [year] = useYear();
-    const { expenses } = useExpenseQuery({ year, monthIdx });
-
-    const { putMonthSalary, addMonthSalary } = useMonthSalaryMutation();
-
-    const { monthSalary } = useMonthSalaryQuery(year, monthIdx);
     const [baseSalary] = useBaseSalary();
 
+    const expenses = useExpenseQuery(year, monthIdx);
+    const monthSalary = useMonthSalaryQuery(year, monthIdx);
+
     const [open, toggleOpen] = useToggle(monthIdx === (new Date).getMonth());
+
     // MODAIS
     const [isSalaryModalOpen, toggleSalaryModal] = useToggle(false);
 
@@ -47,13 +46,11 @@ export default function MonthWrapper({ month, monthIdx }: Props) {
     const handlePutMonthSalary = (value: number) => {
         if (monthSalary) putMonthSalary({ ...monthSalary, salary: value });
         else {
-            const insert = { year: year, monthIdx: monthIdx, salary: value };
-            addMonthSalary(insert);
+            const newMonthSalary = { year: year, monthIdx: monthIdx, salary: value };
+            addMonthSalary(newMonthSalary);
         }
         toggleSalaryModal();
     }
-
-    // monthSalary && console.log(monthSalary.year, MONTHS[monthSalary.monthIdx], monthSalary.salary);
 
     return <>
         <div className={`${open && "my-1"}`}>
@@ -65,8 +62,8 @@ export default function MonthWrapper({ month, monthIdx }: Props) {
                 </span>
             </div>
             {open &&
-                <div className="md:px-4 lg:px-8">
-                    <ExpenseList expenses={expenses} monthIdx={monthIdx} />
+                <div className="md:px-4">
+                    <ExpenseList expenses={expenses} />
                     <GridRow>
                         <AddExpense monthIdx={monthIdx} />
                     </GridRow>

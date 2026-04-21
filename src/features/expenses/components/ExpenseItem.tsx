@@ -1,9 +1,9 @@
-import { db, type Expense } from "@/shared/dexieDB";
-import useExpenseMutation from "../hooks/useExpenseMutation";
+import { db, type Expense } from "@/db/dexieDB";
 import MonetaryInput from "@/shared/components/MonetaryInput";
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import useCategoryQuery from "@/features/categories/hooks/useCategoryQuery";
+import { getCategory } from "@/db/repositories/CategoryRepository";
+import { updateExpense } from "@/db/repositories/ExpenseRepository";
 
 export type Props = {
     expense: Expense;
@@ -12,9 +12,7 @@ export type Props = {
 
 
 export default function ExpenseItem({ expense }: Props) {
-    const { editExpense } = useExpenseMutation();
-    const { getCategory } = useCategoryQuery();
-
+    // TODO: refact
     const getExpenseCategories = (expenseId: number) => useLiveQuery(
         async () => {
             const expenseCategories = await db.expenseCategory
@@ -33,14 +31,13 @@ export default function ExpenseItem({ expense }: Props) {
     const category = getExpenseCategories(expense.id);
 
     const [newValue, setNewValue] = useState(expense.value);
-    // const [categories] = useCategories();
 
     const handleValueInput = (value: number) => {
         setNewValue(value);
-        editExpense({ ...expense, value: Number.isNaN(value) ? 0 : value });
+        updateExpense({ ...expense, value: Number.isNaN(value) ? 0 : value });
     };
 
-    return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1]">
+    return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1 *:md:px-2">
         <div className="flex">
             <input
                 className="w-full h-full outline-none p-1"
@@ -51,7 +48,7 @@ export default function ExpenseItem({ expense }: Props) {
                 placeholder="Nome"
                 value={expense.name}
                 minLength={1}
-                onChange={(ev) => editExpense({ ...expense, name: ev.target.value })}
+                onChange={(ev) => updateExpense({ ...expense, name: ev.target.value })}
             />
 
             {category && <span className="w-2" style={{ backgroundColor: category.color }} />}
@@ -64,5 +61,7 @@ export default function ExpenseItem({ expense }: Props) {
         <div className="*:h-full border-(--light-border-color) border-b border-r">
             <MonetaryInput value={newValue} setValue={handleValueInput} alignRight />
         </div>
+
+
     </div>;
 }

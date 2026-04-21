@@ -22,7 +22,7 @@
   }
 
   * {
-    @apply text-(--font-color) ;
+    @apply text-(--font-color) appearance-none;
   }
 
   body {
@@ -68,14 +68,20 @@
 
   dialog.modal {
     margin: auto;
+    @apply w-[90vw] md:w-[50vw] lg:w-[40vw] rounded-xl border;
   }
 
   dialog.top-left {
-    margin: 0;
+    user-select: none;
     margin-right: auto;
   }
+
   dialog.top-right {
-    margin: 0;
+    user-select: none;
     margin-left: auto;
+  }
+
+  .focus-border {
+    @apply border rounded-md block min-w-fit focus-within:border-(--focus-color);
   }
 }

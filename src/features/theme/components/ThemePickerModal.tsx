@@ -1,9 +1,8 @@
 import Dialog from "@/shared/components/Dialog";
 import { useDebounceCallback } from "usehooks-ts";
 import useThemeColor from "../hooks/useThemeColor";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ColorPicker from "@/shared/components/ColorPicker";
-import useComputedStyle from "@/shared/hooks/useCssProperty";
 
 type Props = {
     isOpen: boolean;
@@ -14,11 +13,14 @@ export default function ThemePickerModal({ isOpen, onClose }: Props) {
     const [theme, setTheme, resetTheme] = useThemeColor();
     const setThemeDebounced = useDebounceCallback(setTheme, 200);
 
-    const [firstColor, setFirstColor] = useState(theme);
-    useEffect(() => setFirstColor(theme), [isOpen]);
+    const fallbackColor = useRef(theme);
+
+    useEffect(() => {
+        if (isOpen) fallbackColor.current = theme;
+    }, [isOpen]);
 
     const handleCancel = () => {
-        setTheme(firstColor);
+        setTheme(fallbackColor.current);
         onClose();
     }
 
@@ -29,7 +31,7 @@ export default function ThemePickerModal({ isOpen, onClose }: Props) {
 
     return <>
         <Dialog isOpen={isOpen} onCancel={handleCancel} dismissable>
-            <div className="bg-(--bg-color) w-[90vw] md:w-[50vw] lg:w-[40vw] p-2 rounded-xl border">
+            <div className="bg-(--bg-color) p-2">
                 <header className="text-xl font-semibold mb-2">
                     Tema
                 </header>

@@ -1,21 +1,16 @@
 import { useRef, useState } from "react"
-import useExpenseMutation from "../hooks/useExpenseMutation";
 import useYear from "../../year/hooks/useYear";
 import MonetaryInput from "@/shared/components/MonetaryInput";
-import useCategoryQuery from "@/features/categories/hooks/useCategoryQuery";
 import uniqolor from "uniqolor";
-import { db } from "@/shared/dexieDB";
+import { addCategory, getCategoryByName } from "@/db/repositories/CategoryRepository";
+import { addExpense } from "@/db/repositories/ExpenseRepository";
+import { addExpenseCategory } from "@/db/repositories/expenseCategoryRepository";
 
 type Props = {
     monthIdx: number;
 }
 
-const mapExpenseCategory = async (expenseId: number, categoryId: number) => await db.expenseCategory.add({ expenseId, categoryId });
-
 export default function AddExpense({ monthIdx }: Props) {
-    const { createExpense } = useExpenseMutation();
-    const { getCategoryByName, addCategory } = useCategoryQuery();
-
     const [year] = useYear();
 
     const [name, setName] = useState('');
@@ -35,31 +30,34 @@ export default function AddExpense({ monthIdx }: Props) {
     const handleCreate = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
 
-        let categId = (await getCategoryByName(name))?.id;
+        let categId;
 
-        if (categId === undefined) {
-            const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
+        if (category) {
+            categId = (await getCategoryByName(category))?.id;
+            if (categId === undefined) {
+                const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
 
-            categId = await addCategory({
-                name: category,
-                color: color.color
-            });
+                categId = await addCategory({
+                    name: category,
+                    color: color.color
+                });
+            }
         }
 
-        const expenseId = await createExpense({
+        const expenseId = await addExpense({
             name: name,
             value: value,
             date: new Date(year, monthIdx)
         });
 
-        await mapExpenseCategory(expenseId, categId!);
+        if (categId) await addExpenseCategory(expenseId, categId);
 
         clearForm();
     }
 
     return <>
-        <form onSubmit={handleCreate} className="contents *:border-(--light-border-color) *:border-[0_1_1_1]">
-            <div className="flex p-1">
+        <form onSubmit={handleCreate} className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1 *:md:px-2">
+            <div className="flex">
                 <input value={name}
                     ref={nameInputRef}
                     className="w-full h-full"

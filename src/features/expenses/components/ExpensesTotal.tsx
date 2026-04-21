@@ -5,11 +5,11 @@ type Props = {
 }
 
 export default function ExpensesTotal({ total }: Props) {
-    return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1]">
-        <span className="p-1 font-semibold ">
+    return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1 *:md:px-2">
+        <span className="font-semibold ">
             Total
         </span>
-        <span className="p-1 justify-end">
+        <span className="justify-end">
             <MonetaryDisplay amount={total} alignRight />
         </span>
         {/* <span className="border-(--light-border-color) border-b"></span> */}

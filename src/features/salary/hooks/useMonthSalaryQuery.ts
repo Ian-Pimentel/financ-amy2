@@ -1,13 +1,8 @@
-import { db } from "@/shared/dexieDB";
+import { getMonthSalary } from "@/db/repositories/monthSalaryRepository";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export default function useMonthSalaryQuery(year: number, monthIdx: number) {
-    const monthSalary = useLiveQuery(
-        () => db.monthSalaries.where('[year+monthIdx]').equals([year, monthIdx]).first(),
+    return useLiveQuery(() => getMonthSalary(year, monthIdx),
         [year, monthIdx]
     );
-
-    return {
-        monthSalary,
-    }
 }

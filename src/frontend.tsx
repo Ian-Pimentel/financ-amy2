@@ -9,17 +9,18 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import { StrictMode } from "react";
 
+
 function start() {
   const root = createRoot(document.getElementById("root")!);
-  // if (process.env.NODE_ENV === 'development') {
-  //   root.render(
-  //     <StrictMode>
-  //       <App />
-  //     </StrictMode>
-  //   );
-  // }
-  // else
-  root.render(<App />);
+  if (process.env.NODE_ENV === 'development') {
+    root.render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+  }
+  else
+    root.render(<App />);
 }
 
 if (document.readyState === "loading") {
@@ -27,3 +28,5 @@ if (document.readyState === "loading") {
 } else {
   start();
 }
+
+import.meta.hot.accept();
