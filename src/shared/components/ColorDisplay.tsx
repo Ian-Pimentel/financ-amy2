@@ -12,7 +12,7 @@ export default function ColorDisplay({ color, title = true, rtl = false, childre
     else if (title === false) label = undefined;
     else label = <span className={`grow ${rtl && 'text-left'}`}>{title}</span>;
 
-    return <>
+    return (
         <label className="button focus-border flex! items-center">
             {children}
             <span className={`flex flex-1 gap-1 ${rtl && 'flex-row-reverse'}`}>
@@ -20,5 +20,5 @@ export default function ColorDisplay({ color, title = true, rtl = false, childre
                 {label}
             </span>
         </label>
-    </>;
+    );
 }

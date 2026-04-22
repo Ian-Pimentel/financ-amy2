@@ -1,4 +1,4 @@
-import { db } from "../dexieDB";
+import { db, type InsertExpenseCategory } from "../dexieDB";
 
 // QUERY
 const getExpenseCategory = (expenseId: number, categoryId: number) => {
@@ -21,6 +21,10 @@ const addExpenseCategory = (expenseId: number, categoryId: number) => {
     return db.expenseCategory.add({ expenseId, categoryId });
 };
 
+const bulkAddExpenseCategory = (relationships: InsertExpenseCategory[]) => {
+    return db.expenseCategory.bulkAdd(relationships);
+};
+
 const deleteExpenseCategory = (expenseId: number, categoryId: number) => {
     return db.expenseCategory.where({ expenseId, categoryId }).delete();
 }
@@ -38,6 +42,7 @@ export {
     getExpensesCategoriesCollection,
 
     addExpenseCategory,
+    bulkAddExpenseCategory,
     deleteExpenseCategory,
     deleteCategoriesRelationsByExpense,
     deleteExpensesRelationsByCategory,

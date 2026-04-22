@@ -1,15 +1,15 @@
 import Dialog from "@/shared/components/Dialog";
 import { useDebounceCallback } from "usehooks-ts";
 import useThemeColor from "../hooks/useThemeColor";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import ColorPicker from "@/shared/components/ColorPicker";
 
 type Props = {
     isOpen: boolean;
-    onClose: () => void;
+    toggleIsOpen: () => void;
 }
 
-export default function ThemePickerModal({ isOpen, onClose }: Props) {
+export default function ThemePickerModal({ isOpen, toggleIsOpen }: Props) {
     const [theme, setTheme, resetTheme] = useThemeColor();
     const setThemeDebounced = useDebounceCallback(setTheme, 200);
 
@@ -21,15 +21,15 @@ export default function ThemePickerModal({ isOpen, onClose }: Props) {
 
     const handleCancel = () => {
         setTheme(fallbackColor.current);
-        onClose();
+        toggleIsOpen();
     }
 
     const handleSubmit = (ev: React.SubmitEvent) => {
         ev.preventDefault();
-        onClose();
+        toggleIsOpen();
     }
 
-    return <>
+    return (
         <Dialog isOpen={isOpen} onCancel={handleCancel} dismissable>
             <div className="bg-(--bg-color) p-2">
                 <header className="text-xl font-semibold mb-2">
@@ -49,5 +49,5 @@ export default function ThemePickerModal({ isOpen, onClose }: Props) {
                 </footer>
             </div>
         </Dialog>
-    </>;
+    );
 }

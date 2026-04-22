@@ -1,9 +1,9 @@
 import type { MonthIndices } from "@/types";
-import { Dexie, type DBCoreMutateRequest, type EntityTable, type Table, type TransactionMode } from "dexie";
+import { Dexie, type EntityTable } from "dexie";
 
 const EXPENSE_DB_NAME = "ExpensesDB";
 
-type Expense = {
+export type Expense = {
     id: number,
     year: number,
     monthIdx: MonthIndices,
@@ -12,20 +12,20 @@ type Expense = {
     value: number,
 };
 
-type Category = {
+export type Category = {
     id: number,
     name: string,
 
     color: string
 }
 
-type ExpenseCategory = {
+export type ExpenseCategory = {
     id: number,
     expenseId: number,
     categoryId: number,
 }
 
-type MonthSalary = {
+export type MonthSalary = {
     id: number,
     year: number,
     monthIdx: MonthIndices,
@@ -33,9 +33,10 @@ type MonthSalary = {
     salary: number,
 };
 
-type InsertExpense = Omit<Expense, 'id' | 'year' | 'monthIdx'>;
-type InsertCategory = Omit<Category, 'id'>;
-type InsertMonthSalary = Omit<MonthSalary, 'id'>;
+export type InsertExpense = Omit<Expense, 'id' | 'year' | 'monthIdx'>;
+export type InsertCategory = Omit<Category, 'id'>;
+export type InsertExpenseCategory = Omit<ExpenseCategory, 'id'>;
+export type InsertMonthSalary = Omit<MonthSalary, 'id'>;
 
 type ExpenseTable = EntityTable<Expense, "id", InsertExpense>;
 type CategoryTable = EntityTable<Category, "id", InsertCategory>;
@@ -73,10 +74,4 @@ db.expenses.hook('updating', (modifications) => {
     }
 });
 
-export type {
-    MonthSalary,
-    Expense, Category,
-    InsertExpense, InsertCategory,
-    InsertMonthSalary
-}
 export { db }

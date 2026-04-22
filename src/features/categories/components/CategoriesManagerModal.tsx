@@ -1,14 +1,12 @@
 import Dialog from "@/shared/components/Dialog";
-import uniqolor from 'uniqolor';
 import ColorPicker from "@/shared/components/ColorPicker";
 import { useEffect, useRef, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 import ErrorMessage from "@/shared/components/ErrorMessage";
 import SwipeWrapper, { SwipeDelete } from "@/shared/components/SwipeWrapper";
-import useExpenseCategoryQuery from "@/features/expenseCategory/useExpenseCategory";
 import useCategoryQuery from "../hooks/useCategory";
 import { addCategory, deleteCategory, getCategoryByName, updateCategory } from "@/db/repositories/CategoryRepository";
-import Dexie from "dexie";
+import getStrongHexColor from "@/shared/utils/getHexColor";
 
 type Props = {
     isOpen: boolean;
@@ -34,7 +32,8 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
             return;
         }
 
-        const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
+        const color = getStrongHexColor(name);
+
         await addCategory({ name: name, color: color.color });
 
         setError('');
@@ -43,24 +42,21 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
     }
 
     const handleDelete = (id: number) => {
-        console.log('init delete');
         if (window.confirm('Certeza O.o? Isso vai desvincular TODOS os gastos com esta categoria.')) {
             deleteCategory(id);
-            console.log('deleted sucessfully');
-            return;
         }
-        console.log('delete canceled');
     };
 
     useEffect(() => {
-        if (isOpen) {
+        if (!isOpen) {
             setName('');
             setError('');
-            nameInputRef.current?.focus();
+            return;
         }
+        nameInputRef.current?.focus();
     }, [isOpen]);
 
-    return <>
+    return (
         <Dialog isOpen={isOpen} onCancel={toggleIsOpen} dismissable>
             <div className="bg-(--bg-color) p-2">
                 <header className="text-xl font-semibold mb-2">
@@ -101,6 +97,6 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
                 </footer>
             </div>
         </Dialog>
-    </>
+    );
 }
 

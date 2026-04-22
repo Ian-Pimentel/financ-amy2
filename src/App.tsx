@@ -1,46 +1,61 @@
-import "./index.css";
-import useBaseSalary from "@/features/salary/hooks/useBaseSalary";
-import SalaryPromptModal from "@/shared/components/MonetaryPromptModal";
+import { useEffect } from "react";
+import CategoriesDatalist from "./features/categories/components/CategoriesDatalist";
+import Notes from "./features/notes/components/Notes";
+import useBaseSalary from "./features/salary/hooks/useBaseSalary";
 import YearChanger from "./features/year/components/YearChanger";
 import useYear from "./features/year/hooks/useYear";
-import { MONTHS } from "./shared/constants";
+import "./index.css";
+import { useModals } from "./shared/components/ModalContext";
+import ToggleButton from "./shared/components/ToggleButton";
 import MonthWrapper from "./features/month/components/MonthWrapper";
-import CategoriesDatalist from "./features/categories/components/CategoriesDatalist";
-import SideMenu from "./features/sideMenu/components/SideMenu";
-import Notes from "./features/notes/components/Notes";
+import { MONTHS } from "./shared/constants";
+import type { MonthIndices } from "./types";
 
 
 export function App() {
   const [baseSalary, setBaseSalary] = useBaseSalary();
-  const [year, setYear] = useYear();
+  const { openMonetaryPromptModal } = useModals();
 
   const needsSalary = baseSalary <= 0;
 
-  return <>
-    {needsSalary &&
-      <SalaryPromptModal
-        isOpen={needsSalary}
-        onSave={setBaseSalary}
-      />
-    }
+  useEffect(() => {
+    if (needsSalary) openMonetaryPromptModal({
+      onSave(amount) {
+        setBaseSalary(amount);
+      },
+      title: "Informe seu salário."
+    });
+  }, []);
 
+  return (<>
+    <TopBar />
+
+    <main>
+      {MONTHS.map((month, monthIdx: MonthIndices) => {
+        return <MonthWrapper key={month} monthIdx={monthIdx} />
+      })}
+
+      <CategoriesDatalist />
+      <Notes />
+    </main>
+  </>
+  );
+}
+
+function TopBar() {
+  const { isMenuOpen, toggleMenuIsOpen } = useModals();
+  const [year, setYear] = useYear();
+
+  return (
     <header className="grid grid-cols-[1fr_auto_1fr] items-center *:first:justify-self-start *:last:justify-self-end">
-      <SideMenu />
+      <ToggleButton isActive={isMenuOpen} toggleActive={toggleMenuIsOpen}>
+        <div className="text-lg">⚙️</div>
+      </ToggleButton>
       <YearChanger year={year} setYear={setYear} />
       <div />
     </header>
 
-    <main>
-      {MONTHS.map((month, monthIdx) => {
-        return <MonthWrapper key={month} month={month} monthIdx={monthIdx} />
-      })}
-      <CategoriesDatalist />
-
-      <Notes />
-    </main>
-  </>;
+  );
 }
-
-
 
 export default App;

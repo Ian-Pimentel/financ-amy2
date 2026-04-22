@@ -3,31 +3,34 @@ import MonetaryInput from "@/shared/components/MonetaryInput";
 import { useEffect, useState } from "react";
 
 type Props = {
-    title?: string;
-    isOpen: boolean;
     onSave: (monetary: number) => void;
+
+    title: string;
     initialValue?: number;
-    onCancel?: () => void;
+
+    isOpen: boolean;
+    close: () => void;
 }
 
-export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialValue, title }: Props) {
-    const [amount, setAmount] = useState(initialValue || 0);
+export default function MonetaryPromptModal({ onSave, initialValue, title, isOpen, close }: Props) {
+
+    const [amount, setAmount] = useState(0);
     const [error, setError] = useState('');
 
     const dismissable = initialValue !== undefined;
 
-    const clearComponent = () => {
+    const clearForm = () => {
         setError('');
         setAmount(initialValue || 0);
     };
 
     useEffect(() => {
-        if (isOpen) clearComponent();
-    }, [isOpen]);
+        if (isOpen) clearForm();
+    }, [isOpen, initialValue]);
 
     const validateValue = (value: number) => {
         if (value < 1) {
-            setError(title ? `Valor deve ser positivo.` : "Salário precisa ser maior que 0.");
+            setError("Valor deve ser positivo");
             return false;
         }
         setError('');
@@ -40,11 +43,11 @@ export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialV
         onSave(amount);
     }
 
-    return <>
-        <Dialog isOpen={isOpen} dismissable={dismissable} onCancel={onCancel}>
+    return (
+        <Dialog isOpen={isOpen} dismissable={dismissable} onCancel={close}>
             <div className="bg-(--bg-color) p-2">
                 <header className="text-xl font-semibold mb-2">
-                    {title || "Insira seu salário"}
+                    {title}
                 </header>
 
                 <form onSubmit={handleSubmit} id="set-salary-form">
@@ -58,11 +61,11 @@ export default function MonetaryPromptModal({ isOpen, onSave, onCancel, initialV
 
                 <footer className="mt-1 flex justify-between">
                     {dismissable &&
-                        <button type="button" className="button w-1/4" onClick={onCancel}>Cancelar</button>
+                        <button type="button" className="button w-1/4" onClick={close}>Cancelar</button>
                     }
                     <input type="submit" form="set-salary-form" className="button w-1/4 ml-auto" value="Salvar" />
                 </footer>
             </div>
-        </Dialog >
-    </>
+        </Dialog>
+    );
 }

@@ -1,9 +1,9 @@
-import { db, type Expense } from "@/db/dexieDB";
+import { type Expense } from "@/db/dexieDB";
 import MonetaryInput from "@/shared/components/MonetaryInput";
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { getCategory } from "@/db/repositories/CategoryRepository";
-import { updateExpense } from "@/db/repositories/ExpenseRepository";
+import { getCategoryByExpense } from "@/db/repositories/CategoryRepository";
+import { updateExpense } from "@/db/repositories/expenseRepository";
 
 export type Props = {
     expense: Expense;
@@ -12,23 +12,7 @@ export type Props = {
 
 
 export default function ExpenseItem({ expense }: Props) {
-    // TODO: refact
-    const getExpenseCategories = (expenseId: number) => useLiveQuery(
-        async () => {
-            const expenseCategories = await db.expenseCategory
-                .where('expenseId').equals(expenseId)
-                .first();
-
-            if (!expenseCategories) return;
-
-            const categ = await getCategory(expenseCategories.categoryId);
-
-            return categ;
-        },
-        [expenseId]
-    );
-
-    const category = getExpenseCategories(expense.id);
+    const category = useLiveQuery(() => getCategoryByExpense(expense.id), [expense]);
 
     const [newValue, setNewValue] = useState(expense.value);
 
@@ -52,10 +36,6 @@ export default function ExpenseItem({ expense }: Props) {
             />
 
             {category && <span className="w-2" style={{ backgroundColor: category.color }} />}
-
-            {/* {category && <span className="w-full h-full flex items-center before:content-['#']">
-                {category.name}
-            </span>} */}
         </div>
 
         <div className="*:h-full border-(--light-border-color) border-b border-r">

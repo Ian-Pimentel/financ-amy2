@@ -33,6 +33,14 @@
       bg-(--bg-color);
   }
 
+  input[type="date"] {
+    cursor: text;
+    &::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      filter: invert(100%);
+    }
+  }
+
   input::placeholder {
     @apply text-(--hint-color)
   }

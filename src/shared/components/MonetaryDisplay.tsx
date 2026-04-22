@@ -12,10 +12,10 @@ export default function MonetaryDisplay({ amount, currency = "R$", alignRight = 
         return className;
     }
 
-    return <>
+    return (
         <label className="flex items-center ">
             <span className={"text-(--hint-color) " + (!alignRight && "mr-1")}>{currency}</span>
             <span className={css() + "grow"}>{amount !== undefined ? amount.toFixed(2) : "-"}</span>
         </label>
-    </>;
+    );
 }

@@ -8,7 +8,7 @@ type Props = {
 }
 
 export default function MonetaryInput({ value, required = false, setValue, onBlur, currency = "R$", alignRight = false }: Props) {
-    return <>
+    return (
         <label className="flex items-center">
             <span className="text-(--hint-color)">{currency}</span>
             <input
@@ -26,5 +26,5 @@ export default function MonetaryInput({ value, required = false, setValue, onBlu
                 required={required}
             />
         </label>
-    </>;
+    );
 }

@@ -1,9 +1,8 @@
 import { useRef, useState } from "react"
 import useYear from "../../year/hooks/useYear";
 import MonetaryInput from "@/shared/components/MonetaryInput";
-import uniqolor from "uniqolor";
-import { addCategory, getCategoryByName } from "@/db/repositories/CategoryRepository";
-import { addExpense } from "@/db/repositories/ExpenseRepository";
+import { getOrAddCategoryByName } from "@/db/repositories/CategoryRepository";
+import { addExpense } from "@/db/repositories/expenseRepository";
 import { addExpenseCategory } from "@/db/repositories/expenseCategoryRepository";
 
 type Props = {
@@ -30,19 +29,7 @@ export default function AddExpense({ monthIdx }: Props) {
     const handleCreate = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
 
-        let categId;
-
-        if (category) {
-            categId = (await getCategoryByName(category))?.id;
-            if (categId === undefined) {
-                const color = uniqolor(name, { format: "hex", lightness: 50, saturation: 100 });
-
-                categId = await addCategory({
-                    name: category,
-                    color: color.color
-                });
-            }
-        }
+        const categId = await getOrAddCategoryByName(category);
 
         const expenseId = await addExpense({
             name: name,
@@ -55,14 +42,14 @@ export default function AddExpense({ monthIdx }: Props) {
         clearForm();
     }
 
-    return <>
+    return (
         <form onSubmit={handleCreate} className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1 *:md:px-2">
             <div className="flex">
                 <input value={name}
                     ref={nameInputRef}
                     className="w-full h-full"
                     type="text"
-                    name="name"
+                    name="expense-name"
                     id="add-expense-name"
                     placeholder="Novo gasto"
                     required
@@ -73,7 +60,7 @@ export default function AddExpense({ monthIdx }: Props) {
                         className="w-full h-full placeholder:text-(--hint-color)"
 
                         type="text"
-                        name="category"
+                        name="expense-category"
                         placeholder="Categoria"
                         list="categories-list"
                         id="add-expense-category"
@@ -87,8 +74,6 @@ export default function AddExpense({ monthIdx }: Props) {
                 setValue={setValue}
             />
             <input type="submit" className="cursor-pointer hidden" value="➕" />
-            {/* <span className="p-1 flex justify-center items-center border-(--light-border-color) border-b">
-            </span> */}
         </form>
-    </>
+    );
 }

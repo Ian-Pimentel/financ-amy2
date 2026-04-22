@@ -16,12 +16,15 @@ export default function Dialog({ isOpen, onClose, onCancel, children, type = 'mo
 
         if (isOpen) {
             dialogRef.current.showModal();
-        } else dialogRef.current.close();
+            return;
+        }
+
+        dialogRef.current.close();
     }, [isOpen])
 
-    return <>
+    return (
         <dialog
-            className={`bg-transparent border-0 ${type}`}
+            className={`bg-transparent border-0 ${type} overflow-x-hidden`}
             ref={dialogRef}
             onClose={onClose}
             onCancel={onCancel}
@@ -29,5 +32,5 @@ export default function Dialog({ isOpen, onClose, onCancel, children, type = 'mo
         >
             {children}
         </dialog>
-    </>;
+    );
 }

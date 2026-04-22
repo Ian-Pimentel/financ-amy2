@@ -1,40 +1,40 @@
-import type { Month, MonthIndices } from "@/types";
+import type { MonthIndices } from "@/types";
 import useBaseSalary from "../../salary/hooks/useBaseSalary";
 import useYear from "../../year/hooks/useYear";
 import ExpenseList from "../../expenses/components/ExpenseList";
 import useExpenseQuery from "../../expenses/hooks/useExpense";
 import MonetaryDisplay from "@/shared/components/MonetaryDisplay";
 import { useToggle } from "usehooks-ts";
-import MonetaryPromptModal from "@/shared/components/MonetaryPromptModal";
 import useMonthSalaryQuery from "@/features/salary/hooks/useMonthSalaryQuery";
 import GridRow from "@/shared/components/GridRow";
 import AddExpense from "@/features/expenses/components/AddExpense";
 import ExpensesTotal from "@/features/expenses/components/ExpensesTotal";
 import { addMonthSalary, putMonthSalary } from "@/db/repositories/monthSalaryRepository";
+import { MONTHS } from "@/shared/constants";
+import { useModals } from "@/shared/components/ModalContext";
 
 type Props = {
-    month: Month;
     monthIdx: MonthIndices;
 }
 
-export default function MonthWrapper({ month, monthIdx }: Props) {
-    const [year] = useYear();
-    const [baseSalary] = useBaseSalary();
-
-    const expenses = useExpenseQuery(year, monthIdx);
-    const monthSalary = useMonthSalaryQuery(year, monthIdx);
-
+export default function MonthWrapper({ monthIdx }: Props) {
     const [open, toggleOpen] = useToggle(monthIdx === (new Date).getMonth());
 
-    // MODAIS
-    const [isSalaryModalOpen, toggleSalaryModal] = useToggle(false);
+    const [year] = useYear();
+    const expenses = useExpenseQuery(year, monthIdx);
+
+    const [baseSalary] = useBaseSalary();
+    const monthSalary = useMonthSalaryQuery(year, monthIdx);
+
+    const { openMonetaryPromptModal } = useModals();
+
+    const month = MONTHS[monthIdx]!;
 
     if (!expenses) return <div>Carregando {month}...</div>;
 
     const salary = monthSalary?.salary || baseSalary;
     const totalSpent = expenses.reduce((acc, curr) => acc + curr.value, 0);
     const totalSaved = salary - totalSpent;
-    const monthName = month.charAt(0) + month.slice(1).toLowerCase();
 
     const handleOpen = (ev: React.KeyboardEvent<HTMLDivElement>) => {
         if (ev.key === "Enter") {
@@ -49,15 +49,25 @@ export default function MonthWrapper({ month, monthIdx }: Props) {
             const newMonthSalary = { year: year, monthIdx: monthIdx, salary: value };
             addMonthSalary(newMonthSalary);
         }
-        toggleSalaryModal();
     }
 
-    return <>
+    const handleOpenMonthSalary = (ev: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+        const monthName = month.charAt(0) + month.slice(1).toLowerCase();
+
+        ev.stopPropagation();
+        openMonetaryPromptModal({
+            title: `Salário no mês de ${monthName}`,
+            initialValue: salary,
+            onSave: handlePutMonthSalary,
+        });
+    }
+
+    return (
         <div className={`${open && "my-1"}`}>
             <div tabIndex={0} className="flex cursor-pointer!" onClick={toggleOpen} onKeyUp={handleOpen}>
                 <div className={`mr-1 ${open && "rotate-90"}`}>{">"}</div>
                 <div className={`grow ${open && "text-xl font-semibold"}`} >{month}</div>
-                <span onClick={(ev) => { ev.stopPropagation(); toggleSalaryModal() }}>
+                <span onClick={handleOpenMonthSalary}>
                     <MonetaryDisplay amount={totalSaved} />
                 </span>
             </div>
@@ -72,8 +82,6 @@ export default function MonthWrapper({ month, monthIdx }: Props) {
                     </GridRow>
                 </div>
             }
-
-            <MonetaryPromptModal isOpen={isSalaryModalOpen} onSave={handlePutMonthSalary} initialValue={salary} onCancel={toggleSalaryModal} title={`Salário no mês de ${monthName}`} />
         </div>
-    </>
+    );
 }

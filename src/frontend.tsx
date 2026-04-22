@@ -6,21 +6,27 @@
  */
 
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
 import { StrictMode } from "react";
+import ModalProvider from "./shared/components/ModalContext";
+import App from "./App";
 
 
 function start() {
   const root = createRoot(document.getElementById("root")!);
+
   if (process.env.NODE_ENV === 'development') {
     root.render(
       <StrictMode>
-        <App />
+        <ModalProvider>
+          <App />
+        </ModalProvider>
       </StrictMode>
     );
   }
   else
-    root.render(<App />);
+    root.render(<ModalProvider>
+      <App />
+    </ModalProvider>);
 }
 
 if (document.readyState === "loading") {
@@ -28,5 +34,3 @@ if (document.readyState === "loading") {
 } else {
   start();
 }
-
-import.meta.hot.accept();

@@ -12,6 +12,5 @@ export default function ExpensesTotal({ total }: Props) {
         <span className="justify-end">
             <MonetaryDisplay amount={total} alignRight />
         </span>
-        {/* <span className="border-(--light-border-color) border-b"></span> */}
     </div>;
 }
