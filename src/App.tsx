@@ -11,6 +11,7 @@ import MonthWrapper from "./features/month/components/MonthWrapper";
 import { MONTHS } from "./shared/constants";
 import type { MonthIndices } from "./types";
 
+// teste dippozz
 
 export function App() {
   const [baseSalary, setBaseSalary] = useBaseSalary();
