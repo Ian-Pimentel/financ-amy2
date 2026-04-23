@@ -93,7 +93,7 @@
     }
   }
 
-  input {
+  input, button, [role="button"] {
     transition: border-color 0.15s ease-out;
     
     outline: none;

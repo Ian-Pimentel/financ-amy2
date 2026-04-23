@@ -1,32 +1,39 @@
-/**
- * This file is the entry point for the React app, it sets up the root
- * element and renders the App component to the DOM.
- *
- * It is included in `src/index.html`.
- */
-
+import './index.css'
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
-import ModalProvider from "./shared/components/ModalContext";
-import App from "./App";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 
+import { rootRoute } from "./routes/__root";
+import { indexRoute } from "./routes/index";
+import { aboutRoute } from "./routes/about";
+
+const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
+
+const router = createRouter({ routeTree });
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
 
 function start() {
-  const root = createRoot(document.getElementById("root")!);
+  const rootElement = document.getElementById('root')!
+  if (!rootElement.innerHTML) {
+    const root = createRoot(rootElement);
 
-  if (process.env.NODE_ENV === 'development') {
-    root.render(
-      <StrictMode>
-        <ModalProvider>
-          <App />
-        </ModalProvider>
-      </StrictMode>
-    );
+    if (process.env.NODE_ENV === 'development') {
+      root.render(
+        <>
+          <StrictMode>
+            <RouterProvider router={router} />
+          </StrictMode>
+        </>,
+      );
+    } else {
+      root.render(<RouterProvider router={router} />);
+    }
   }
-  else
-    root.render(<ModalProvider>
-      <App />
-    </ModalProvider>);
 }
 
 if (document.readyState === "loading") {
