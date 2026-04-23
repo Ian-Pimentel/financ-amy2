@@ -1,5 +1,5 @@
 import { db, type InsertExpense } from "@/db/dexieDB";
-import { getOrAddCategoryByName } from "@/db/repositories/CategoryRepository";
+import { getOrAddCategoryByName } from "@/db/repositories/categoryRepository";
 import { bulkAddExpenseCategory } from "@/db/repositories/expenseCategoryRepository";
 import { bulkAddExpense } from "@/db/repositories/expenseRepository";
 

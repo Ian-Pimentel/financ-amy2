@@ -5,7 +5,7 @@ import { useDebounceCallback } from "usehooks-ts";
 import ErrorMessage from "@/shared/components/ErrorMessage";
 import SwipeWrapper, { SwipeDelete } from "@/shared/components/SwipeWrapper";
 import useCategoryQuery from "../hooks/useCategory";
-import { addCategory, deleteCategory, getCategoryByName, updateCategory } from "@/db/repositories/CategoryRepository";
+import { addCategory, deleteCategory, getCategoryByName, updateCategory } from "@/db/repositories/categoryRepository";
 import getStrongHexColor from "@/shared/utils/getHexColor";
 
 type Props = {

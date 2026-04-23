@@ -1,5 +1,5 @@
 import type { Expense } from "@/db/dexieDB";
-import { getCategoryByExpense } from "@/db/repositories/CategoryRepository";
+import { getCategoryByExpense } from "@/db/repositories/categoryRepository";
 import { useModals } from "@/shared/components/ModalContext";
 
 type Props = {

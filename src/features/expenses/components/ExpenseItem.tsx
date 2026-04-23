@@ -2,7 +2,7 @@ import { type Expense } from "@/db/dexieDB";
 import MonetaryInput from "@/shared/components/MonetaryInput";
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { getCategoryByExpense } from "@/db/repositories/CategoryRepository";
+import { getCategoryByExpense } from "@/db/repositories/categoryRepository";
 import { updateExpense } from "@/db/repositories/expenseRepository";
 
 export type Props = {

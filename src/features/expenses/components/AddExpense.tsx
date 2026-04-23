@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import useYear from "../../year/hooks/useYear";
 import MonetaryInput from "@/shared/components/MonetaryInput";
-import { getOrAddCategoryByName } from "@/db/repositories/CategoryRepository";
+import { getOrAddCategoryByName } from "@/db/repositories/categoryRepository";
 import { addExpense } from "@/db/repositories/expenseRepository";
 import { addExpenseCategory } from "@/db/repositories/expenseCategoryRepository";
 
