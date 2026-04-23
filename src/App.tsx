@@ -12,6 +12,10 @@ import { MONTHS } from "./shared/constants";
 import type { MonthIndices } from "./types";
 
 export function App() {
+  return (<ExpensesYear />);
+}
+
+function ExpensesYear() {
   const [baseSalary, setBaseSalary] = useBaseSalary();
   const { openMonetaryPromptModal } = useModals();
 

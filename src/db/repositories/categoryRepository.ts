@@ -30,14 +30,14 @@ const addCategory = async (newCategory: InsertCategory) => {
     }
 }
 const getOrAddCategoryByName = async (name: string) => {
-    if (name) {
-        let categoryId = (await getCategoryByName(name))?.id;
-        if (categoryId === undefined) {
-            const color = getStrongHexColor(name);
-            categoryId = await addCategory({ name: name, color: color.color });
-        }
-        return categoryId;
+    if (name === '') throw Error('Name must not be empty.');
+
+    let categoryId = (await getCategoryByName(name))?.id;
+    if (categoryId === undefined) {
+        const color = getStrongHexColor(name);
+        categoryId = await addCategory({ name: name, color: color.color });
     }
+    return categoryId;
 }
 
 const updateCategory = async (category: Category) => {

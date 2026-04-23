@@ -48,9 +48,9 @@ export default function MonetaryPromptModal({ onSave, initialValue, title, isOpe
 
                 <footer className="mt-2 flex justify-between">
                     {dismissable &&
-                        <button type="button" className="w-1/4" onClick={close}>Cancelar</button>
+                        <button type="button" className="w-2/5 md:w-1/4" onClick={close}>Cancelar</button>
                     }
-                    <input type="submit" form="set-salary-form" className="w-1/4 ml-auto" value="Salvar" />
+                    <input type="submit" form="set-salary-form" className="w-2/5 md:w-1/4 ml-auto" value="Salvar" />
                 </footer>
             </div>
         </Dialog >

@@ -36,7 +36,7 @@ export default function SideMenu({ isOpen, toggleIsOpen }: Props) {
                 <div className="p-1">
                     <ul className="*:last:border-none">
                         <MenuItem title="Categorias" action={toggleCategoriesManagerModal} />
-                        <MenuItem title="Gasto Recorrente" action={toggleRecurrentExpenseModalOpen} />
+                        <MenuItem title="Gasto Parcelado" action={toggleRecurrentExpenseModalOpen} />
                         <MenuItem title="Mudar Tema" action={toggleThemePickerModal} />
 
                         <MenuItem title="Alterar Salário" action={() =>
