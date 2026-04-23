@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* css é MUITO legal */
+    --original-theme-color: #a9631e;
+
+    --theme-color: var(--original-theme-color);
+    --focus-color: hsl(from var(--theme-color) h 100% 40%);
+
+    --font-color: hsl(from var(--theme-color) h calc(s * 0.8) 85%);
+    --bg-color: hsl(from var(--theme-color) h calc(s * 0.5) 10%);
+
+    --light-border-color: hsl(from var(--font-color) h s l / 0.3);
+    --hint-color: hsl(from var(--font-color) h s l / 0.5);
+
+    --fieldset-border: 3px;
+
+    color: var(--font-color) !important;
+
+    * {
+      transition: all 0.2s ease-out;
+    }
+  }
+
+  body {
+    @apply 
+      min-w-[320px]
+      min-h-screen 
+      relative p-0 m-0 
+      bg-(--bg-color);
+  }
+
+  ::placeholder {
+    color: var(--hint-color);
+  }
+  
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  
+  ::-webkit-calendar-picker-indicator {
+    filter: invert();
+  }
+
+  ::-webkit-search-cancel-button,
+  ::-webkit-search-decoration {
+    cursor: pointer;
+  }
+
+  ::-webkit-color-swatch-wrapper,
+  ::-webkit-color-swatch,
+  ::-moz-color-swatch {
+    padding: 0;
+    border-color: var(--font-color);
+    cursor: pointer;
+    @apply rounded-md;
+  }
+
+  input {
+    transition: all 0.2s ease-out;
+    @apply text-base;
+    outline: none;
+    display: block;
+    appearance: none;
+    -webkit-appearance: none; /*verificar*/
+  }
+
+  input:where([type="date"], [type="datetime-local"], [type="month"], [type="week"], [type="time"]) {
+    cursor: text;
+  }
+  
+  input:not([type="button"], [type="submit"], [type="reset"], [type="radio"], [type="checkbox"]) {
+    width: 100%;
+  }
+
+  /* Radio/Checkbox */
+
+  input:where([type="checkbox"], [type="radio"]) {
+    background-color: var(--bg-color);
+
+    @apply w-4 h-4 border;
+    
+    &:checked {
+      border-color: var(--focus-color);
+      background-color: var(--focus-color);
+    }
+  }
+
+  input[type="checkbox"] {
+    @apply rounded-sm;
+  }
+  input[type="radio"] {
+    @apply rounded-full;
+  }
+
+  label > input:where([type="checkbox"], [type="radio"]) {
+    @apply mr-2;
+  }
+
+/* Button */
+  input:where([type="button"], [type="submit"], [type="reset"]), button[type="button"], .button {
+    @apply border rounded-md p-1 font-semibold;
+    user-select: none;
+    cursor: pointer;
+    &:hover {
+      @apply bg-(--focus-color)/50;
+    }
+    &:active {
+      background-color: var(--focus-color);
+      color: var(--bg-color);
+    }
+  }
+
+  input[type="file"] {
+    &::file-selector-button {
+      @apply border rounded-md p-1 font-semibold;
+      user-select: none;
+      cursor: pointer;
+    }
+    &:hover::file-selector-button {
+      @apply bg-(--focus-color)/50;
+    }
+    &:active::file-selector-button {
+      background-color: var(--focus-color);
+      color: var(--bg-color);
+    }
+  }
+  
+  label {
+    &:has(> input) {
+      @apply text-sm p-2;
+      display: flex;
+      align-items: center;
+      &:focus-within {
+        border-color: var(--focus-color);
+      }
+    }
+
+    &:has(:user-invalid) {
+      @apply border-red-500!;
+    }
+  }
+
+  label:has(input[type="search"]):before {
+    content: '🔎';
+    display: block;
+  }
+
+  dialog {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  ::backdrop {
+    background-color: hsl(from var(--bg-color) h s l / 20%);
+    @apply backdrop-blur-xs;
+  }
+
+  fieldset {
+    display: flex;
+    flex-direction: column;
+
+    /* divide do tailwind */
+    :where(& > :not(:last-child)) {
+      border-color: var(--light-border-color);
+      border-bottom-width: var(--fieldset-border);
+    }
+
+    &:focus-within, &:hover {
+      > legend {
+        border-color: var(--focus-color);
+      }
+    }
+
+    /* insets */
+    fieldset > legend {
+      border-left-width: var(--fieldset-border);
+      @apply pt-2 pl-1;
+    }
+
+    /* esse efeito é muito foda pra ficar contido só nessa configuração */
+    & > *:not(legend) {
+      &:not(fieldset) {
+        border-left-width: var(--fieldset-border);
+
+        &:last-child {
+          border-bottom-width: var(--fieldset-border);
+        }
+      }
+
+      border-color: var(--light-border-color);
+      margin-left: 1rem;
+      
+      &:nth-child(2) {
+        @apply pt-2;
+      }
+
+      &:hover {
+        border-left-color: var(--focus-color);
+      }
+
+      &:has(~ :hover), &:has(~ :focus-within) {
+        border-left-color: var(--focus-color);
+      }
+
+    }
+  }
+}

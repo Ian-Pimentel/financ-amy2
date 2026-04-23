@@ -8,9 +8,12 @@ type Props = {
 
 export default function ToggleButton({ isActive, toggleActive, children, required }: Props) {
     return (
-        <label className={"button " + (isActive && "bg-(--focus-color) text-(--font-color) font-semibold")}>
-            <input type="checkbox" className="hidden" checked={isActive} required={required} onChange={toggleActive} />
+        <label role="button" className="inline-block">
             {children}
+            <input type="checkbox"
+                checked={isActive} required={required} onChange={toggleActive}
+                className="sr-only peer"
+            />
         </label>
     );
 }

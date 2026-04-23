@@ -14,6 +14,7 @@ type Props = {
 }
 
 export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) {
+    const formRef = useRef<HTMLFormElement>(null);
     const [error, setError] = useState('');
 
     const categories = useCategoryQuery();
@@ -22,8 +23,16 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
     const [name, setName] = useState('');
     const nameInputRef = useRef<HTMLInputElement>(null);
 
+    const clearForm = () => {
+        setError('');
+        setName('');
+        formRef.current?.reset();
+    }
+
     const handleSubmit = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
+
+        if (!name) return;
 
         const exists = (await getCategoryByName(name)) !== undefined;
 
@@ -36,8 +45,7 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
 
         await addCategory({ name: name, color: color.color });
 
-        setError('');
-        setName('');
+        clearForm();
         nameInputRef.current?.focus();
     }
 
@@ -49,8 +57,7 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
 
     useEffect(() => {
         if (!isOpen) {
-            setName('');
-            setError('');
+            clearForm();
             return;
         }
         nameInputRef.current?.focus();
@@ -67,36 +74,36 @@ export default function CategoriesManagerModal({ isOpen, toggleIsOpen }: Props) 
                     {categories?.map(category =>
                         <li key={category.id}>
                             <SwipeWrapper leftElement={<SwipeDelete />} onSwipeLeft={() => handleDelete(category.id)}>
-                                <ColorPicker rtl title={category.name} color={category.color} onChange={(color) => debounced({ ...category, color: color })} />
+                                <ColorPicker title={category.name} color={category.color} onChange={(color) => debounced({ ...category, color: color })} />
                             </SwipeWrapper>
                         </li>
                     )}
                 </ul>
 
-                <form onSubmit={handleSubmit} className="flex gap-2 mt-2" id="add-category-form">
-                    <fieldset className="flex-1">
-                        <div className="button focus-within:border-(--focus-color)">
-                            <input value={name}
-                                ref={nameInputRef}
-                                className="outline-none min-w-0 w-full"
-                                type="text"
-                                name="category-name"
-                                id="add-category-name"
-                                placeholder="Nova categoria"
-                                autoFocus={true}
-                                required
-                                onChange={(ev) => setName(ev.target.value)}
-                            />
-                        </div>
-                    </fieldset>
-                    <input type="submit" form="add-category-form" className="button" value="➕" />
+                <form onSubmit={handleSubmit} className="flex gap-2 mt-2" id="add-category-form" ref={formRef}>
+                    <label className="grow border focus-border">
+                        <input value={name}
+                            ref={nameInputRef}
+                            className="outline-none min-w-0 w-full"
+                            type="text"
+                            name="category-name"
+                            id="add-category-name"
+                            placeholder="Nova categoria"
+                            required
+                            onChange={(ev) => setName(ev.target.value)}
+                        />
+                    </label>
+                    <input type="submit" form="add-category-form" value="➕" />
                 </form>
-                <footer className="mt-2">
+                <footer className="mt-2 flex items-center">
                     {error && <ErrorMessage message={error} />}
-                    <button type="button" className="button ml-auto" onClick={toggleIsOpen}>Fechar</button>
+                    <div className="ml-auto">
+
+                        <button type="button" onClick={toggleIsOpen}>Fechar</button>
+                    </div>
                 </footer>
             </div>
-        </Dialog>
+        </Dialog >
     );
 }
 

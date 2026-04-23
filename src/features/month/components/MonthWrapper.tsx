@@ -65,8 +65,8 @@ export default function MonthWrapper({ monthIdx }: Props) {
     return (
         <div className={`${open && "my-1"}`}>
             <div tabIndex={0} className="flex cursor-pointer!" onClick={toggleOpen} onKeyUp={handleOpen}>
-                <div className={`mr-1 ${open && "rotate-90"}`}>{">"}</div>
-                <div className={`grow ${open && "text-xl font-semibold"}`} >{month}</div>
+                <div className={`mr-1 transition-transform duration-200 ${open ? "rotate-90" : "-scale-x-100"}`}>{open ? "📖" : "📕"}</div>
+                <div className={`grow transition-[font] ${open && "text-xl font-semibold"}`} >{month}</div>
                 <span onClick={handleOpenMonthSalary}>
                     <MonetaryDisplay amount={totalSaved} />
                 </span>

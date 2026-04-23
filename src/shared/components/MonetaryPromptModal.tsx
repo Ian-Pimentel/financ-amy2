@@ -1,6 +1,7 @@
 import Dialog from "@/shared/components/Dialog";
 import MonetaryInput from "@/shared/components/MonetaryInput";
 import { useEffect, useState } from "react";
+import CurrencyTag from "./CurrencyTag";
 
 type Props = {
     onSave: (monetary: number) => void;
@@ -13,33 +14,21 @@ type Props = {
 }
 
 export default function MonetaryPromptModal({ onSave, initialValue, title, isOpen, close }: Props) {
-
-    const [amount, setAmount] = useState(0);
-    const [error, setError] = useState('');
+    const [amount, setAmount] = useState(initialValue);
 
     const dismissable = initialValue !== undefined;
 
     const clearForm = () => {
-        setError('');
-        setAmount(initialValue || 0);
+        setAmount(initialValue);
     };
 
     useEffect(() => {
         if (isOpen) clearForm();
     }, [isOpen, initialValue]);
 
-    const validateValue = (value: number) => {
-        if (value < 1) {
-            setError("Valor deve ser positivo");
-            return false;
-        }
-        setError('');
-        return true;
-    }
-
     const handleSubmit = (ev: React.SubmitEvent) => {
         ev.preventDefault();
-        if (!validateValue(amount)) return;
+        if (!amount || amount <= 0) return;
         onSave(amount);
     }
 
@@ -51,21 +40,19 @@ export default function MonetaryPromptModal({ onSave, initialValue, title, isOpe
                 </header>
 
                 <form onSubmit={handleSubmit} id="set-salary-form">
-                    <fieldset>
-                        <div className="button focus-within:border-(--focus-color)">
-                            <MonetaryInput value={amount} setValue={setAmount} onBlur={validateValue} required />
-                        </div>
-                        <span className={`text-red-500 text-sm ${!error && "invisible"}`}>{error || "default"}</span>
-                    </fieldset>
+                    <label className="grow border focus-border flex">
+                        <CurrencyTag />
+                        <MonetaryInput value={amount} setValue={setAmount} required />
+                    </label>
                 </form>
 
-                <footer className="mt-1 flex justify-between">
+                <footer className="mt-2 flex justify-between">
                     {dismissable &&
-                        <button type="button" className="button w-1/4" onClick={close}>Cancelar</button>
+                        <button type="button" className="w-1/4" onClick={close}>Cancelar</button>
                     }
-                    <input type="submit" form="set-salary-form" className="button w-1/4 ml-auto" value="Salvar" />
+                    <input type="submit" form="set-salary-form" className="w-1/4 ml-auto" value="Salvar" />
                 </footer>
             </div>
-        </Dialog>
+        </Dialog >
     );
 }

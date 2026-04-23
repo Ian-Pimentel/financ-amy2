@@ -21,10 +21,9 @@ export default function ExpenseItem({ expense }: Props) {
         updateExpense({ ...expense, value: Number.isNaN(value) ? 0 : value });
     };
 
-    return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1 *:md:px-2">
+    return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1">
         <div className="flex">
             <input
-                className="w-full h-full outline-none p-1"
                 id={`name-${expense.id}`}
                 type="text"
                 name="name"
@@ -38,10 +37,6 @@ export default function ExpenseItem({ expense }: Props) {
             {category && <span className="w-2" style={{ backgroundColor: category.color }} />}
         </div>
 
-        <div className="*:h-full border-(--light-border-color) border-b border-r">
-            <MonetaryInput value={newValue} setValue={handleValueInput} alignRight />
-        </div>
-
-
+        <MonetaryInput value={newValue} setValue={handleValueInput} alignRight />
     </div>;
 }

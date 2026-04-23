@@ -67,15 +67,16 @@ export default function SwipeWrapper({ rightElement, leftElement, onSwipeLeft, o
             onScrollEnd={handleScrollEnd}
             className="
                 @container flex 
+                scroll-smooth
                 overflow-y-hidden
-                overflow-x-scroll scroll-smooth snap-x snap-proximity overscroll-none! no-scrollbar
+                overflow-x-scroll snap-x snap-proximity overscroll-none! no-scrollbar
                 *:snap-always
                 *:first:snap-start *:last:snap-end
                 *:first:tab-index
             "
         >
             {shouldHoldLeft ?
-                <div className="flex-0 basis-[fit-content]" tabIndex={-1}>{leftElement}</div> :
+                <div className="" tabIndex={-1}>{leftElement}</div> :
                 <SwipeAction onVisibilityChange={(visible) => { isLeftVisible.current = visible }} options={{ threshold: 1 }}>
                     {leftElement}
                 </SwipeAction>
@@ -84,7 +85,7 @@ export default function SwipeWrapper({ rightElement, leftElement, onSwipeLeft, o
             <div ref={contentRef} onClick={() => scrollToContent()} className="flex-[0_0_100cqw] snap-center">{children}</div>
 
             {shouldHoldRight ?
-                <div className="flex-0 basis-[fit-content]" tabIndex={-1}>{rightElement}</div> :
+                <div className="" tabIndex={-1}>{rightElement}</div> :
                 <SwipeAction onVisibilityChange={(visible) => { isRightVisible.current = visible }} options={{ threshold: 1 }}>
                     {rightElement}
                 </SwipeAction>

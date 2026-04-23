@@ -5,10 +5,11 @@ type DialogModalProps = {
     onClose?: () => void,
     onCancel?: () => void,
     type?: 'modal' | 'top-left' | 'top-right'
-    dismissable?: boolean
+    dismissable?: boolean,
+    closedby?: "none" | "closerequest" | "any"
 } & React.PropsWithChildren;
 
-export default function Dialog({ isOpen, onClose, onCancel, children, type = 'modal', dismissable }: DialogModalProps) {
+export default function Dialog({ isOpen, onClose, onCancel, children, type = 'modal', dismissable, closedby }: DialogModalProps) {
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     useEffect(() => {
@@ -24,11 +25,11 @@ export default function Dialog({ isOpen, onClose, onCancel, children, type = 'mo
 
     return (
         <dialog
-            className={`bg-transparent border-0 ${type} overflow-x-hidden`}
+            className={type}
             ref={dialogRef}
             onClose={onClose}
             onCancel={onCancel}
-            closedby={dismissable ? 'closerequest' : 'none'}
+            closedby={closedby === undefined ? (dismissable ? 'closerequest' : 'none') : closedby}
         >
             {children}
         </dialog>

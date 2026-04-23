@@ -26,11 +26,11 @@ export default function SideMenu({ isOpen, toggleIsOpen }: Props) {
     };
 
     return (
-        <Dialog isOpen={isOpen} type="top-left" onCancel={toggleIsOpen} dismissable>
+        <Dialog isOpen={isOpen} type="top-left" onCancel={toggleIsOpen} closedby="any">
             <aside className="bg-linear-to-b from-(--bg-color) to-transparent p-2 h-screen w-screen md:w-[30vw] xl:w-[15vw]">
                 <div className="flex justify-between mb-2">
                     <span className="text-2xl">Menu</span>
-                    <button type="button" className="button" onClick={toggleIsOpen}>❌</button>
+                    <button type="button" onClick={toggleIsOpen}>❌</button>
                 </div>
 
                 <div className="p-1">

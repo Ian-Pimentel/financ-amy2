@@ -88,7 +88,6 @@ export default function AddRecurrentExpenseModal({ isOpen, toggleIsOpen }: Props
     }, [isOpen]);
 
     return (
-
         <Dialog isOpen={isOpen} onCancel={toggleIsOpen} dismissable>
             <div className="p-2 bg-(--bg-color)">
                 <header className="mb-2 text-lg font-semibold">
@@ -163,9 +162,9 @@ export default function AddRecurrentExpenseModal({ isOpen, toggleIsOpen }: Props
                     </fieldset>
                     {error && <ErrorMessage message={error} />}
                 </form>
-                <footer className="mt-2 flex justify-between">
-                    <button type="button" className="button" onClick={toggleIsOpen}>Cancelar</button>
-                    <input type="submit" className="button" value="Adicionar" form="add-recurrent-expense-form" />
+                <footer className="mt-3 flex justify-between">
+                    <button type="button" onClick={toggleIsOpen}>Cancelar</button>
+                    <input type="submit" value="Adicionar" form="add-recurrent-expense-form" />
                 </footer>
             </div>
         </Dialog>

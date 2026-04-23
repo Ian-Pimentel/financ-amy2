@@ -2,7 +2,6 @@ import Dialog from "@/shared/components/Dialog";
 import { useEffect, useState } from "react";
 import type { Expense } from "@/db/dexieDB";
 import useCategoryQuery from "../hooks/useCategory";
-import ColorDisplay from "@/shared/components/ColorDisplay";
 import { addExpenseCategory } from "@/db/repositories/expenseCategoryRepository";
 
 type Props = {
@@ -23,7 +22,7 @@ export default function MapExpenseCategoryModal({ isOpen, expense, initialCatego
         } else {
             setSelectedCategoryId(initialCategoryId)
         }
-    }, [isOpen, initialCategoryId]);
+    }, [isOpen, expense]);
 
     const handleSubmit = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
@@ -61,19 +60,15 @@ export default function MapExpenseCategoryModal({ isOpen, expense, initialCatego
                             {categories?.map(category => {
                                 const active = selectedCategoryId === category.id;
 
-                                return <ColorDisplay rtl title={category.name} color={category.color} key={category.id}>
-                                    <span className="ml-1 mr-2">
-                                        <RadioIndicator active={active} />
-                                    </span>
-                                    <input
-                                        type="radio"
-                                        name="category-group"
-                                        value={category.id}
-                                        checked={active}
-                                        onChange={() => setSelectedCategoryId(category.id)}
-                                        autoFocus={false}
-                                    />
-                                </ColorDisplay>
+                                return (
+                                    <label key={category.id} className="contents">
+                                        <div role="button" className="flex gap-2 items-center">
+                                            <input type="radio" checked={active} onChange={() => setSelectedCategoryId(category.id)} />
+                                            <div className="grow">{category.name}</div>
+                                            <input type="color" className="shrink basis-0 pointer-events-none" value={category.color} readOnly />
+                                        </div>
+                                    </label>
+                                );
                             })}
                         </fieldset>
                     </form>
@@ -81,7 +76,7 @@ export default function MapExpenseCategoryModal({ isOpen, expense, initialCatego
 
 
                 <footer className="flex justify-end mt-2">
-                    <button type="button" className="button" onClick={toggleIsOpen}>Cancelar</button>
+                    <button type="button" onClick={toggleIsOpen}>Cancelar</button>
                     {
                         hasCategories &&
                         <input type="submit" className="button ml-auto" value="Salvar" form="map-expense-category-form" />
@@ -90,8 +85,4 @@ export default function MapExpenseCategoryModal({ isOpen, expense, initialCatego
             </div>
         </Dialog>
     );
-}
-
-export function RadioIndicator({ active }: { active: boolean }) {
-    return <span className={`rounded-full block w-4 h-4 border ${active && 'bg-(--theme-color) border-none'}`} />;
 }

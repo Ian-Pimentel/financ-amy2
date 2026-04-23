@@ -11,18 +11,16 @@
     --font-color: hsl(from var(--theme-color) h calc(s * 0.8) 85%);
 
     --hint-color: hsl(from var(--font-color) h s l / 0.5);
-    --focus-color: hsl(from var(--theme-color) h 100% 40%);
 
     --light-border-color: hsl(from var(--font-color) h s l / 0.3);
 
-    --red: rgb(255,0,0);
-
+    --focus-color: hsl(from var(--theme-color) h 100% 40%);
+    --hover-color: hsl(from var(--theme-color) h 100% 50% / 0.3);
+    
+    color: var(--font-color);
+    scroll-behavior: smooth;
     overscroll-behavior: none;
     touch-action: manipulation;
-  }
-
-  * {
-    @apply text-(--font-color) appearance-none;
   }
 
   body {
@@ -33,26 +31,215 @@
       bg-(--bg-color);
   }
 
-  input[type="date"] {
-    cursor: text;
-    &::-webkit-calendar-picker-indicator {
-      cursor: pointer;
-      filter: invert(100%);
+  ::placeholder {
+    color: var(--hint-color);
+  }
+  
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  
+  ::-webkit-calendar-picker-indicator {
+    filter: invert();
+  }
+
+  ::-webkit-search-cancel-button,
+  ::-webkit-search-decoration {
+    cursor: pointer;
+  }
+
+  /* Colorpicker */
+
+  ::-webkit-color-swatch-wrapper,
+  ::-webkit-color-swatch,
+  ::-moz-color-swatch {
+    padding: 0;
+    border-color: var(--font-color);
+    cursor: pointer;
+    @apply min-w-6 border rounded-md;
+    transition: border-color 0.15s ease-out;
+  }
+
+    :hover::-webkit-color-swatch-wrapper,
+    :hover::-webkit-color-swatch,
+    :hover::-moz-color-swatch {
+      border-color: var(--hover-color);
+    }
+    
+    :focus::-webkit-color-swatch-wrapper,
+    :focus::-webkit-color-swatch,
+    :focus::-moz-color-swatch {
+      border-color: var(--focus-color);
+    }
+
+  label {
+    ::-webkit-color-swatch-wrapper,
+    ::-webkit-color-swatch,
+    ::-moz-color-swatch {
+      border:none;
+    }
+
+    :hover::-webkit-color-swatch-wrapper,
+    :hover::-webkit-color-swatch,
+    :hover::-moz-color-swatch {
+      border-color: var(--font-color);
+    }
+
+    :focus::-webkit-color-swatch-wrapper,
+    :focus::-webkit-color-swatch,
+    :focus::-moz-color-swatch {
+      border-color: var(--font-color);
     }
   }
 
-  input::placeholder {
-    @apply text-(--hint-color)
+  input {
+    transition: border-color 0.15s ease-out;
+    
+    outline: none;
+    display: block;
+    appearance: none;
+    -webkit-appearance: none; /*verificar*/
+  }
+
+  input:where([type="date"], [type="datetime-local"], [type="month"], [type="week"], [type="time"]) {
+    cursor: text;
+  }
+  
+  input:not([type="button"], [type="submit"], [type="reset"], [type="radio"], [type="checkbox"]) {
+    width: 100%;
+  }
+
+  /* Radio/Checkbox */
+
+  input:where([type="checkbox"], [type="radio"]) {
+    background-color: var(--bg-color);
+    cursor: pointer;
+    border-width: 1px;
+
+    @apply w-4 h-4;
+
+    &:hover {
+      background-color: var(--hover-color);
+    }
+    
+    &:checked {
+      border-color: var(--focus-color);
+      background-color: var(--focus-color);
+
+      &:hover {
+        @apply bg-(--focus-color)/90;
+      }
+    }
+  }
+
+  input[type="checkbox"] {
+    @apply rounded-sm;
+  }
+  input[type="radio"] {
+    @apply rounded-full;
+  }
+
+  label > input:where([type="checkbox"], [type="radio"]) {
+    @apply mr-2;
+  }
+
+  label:has(input:where([type="checkbox"], [type="radio"]):checked) {
+    border-color: var(--focus-color);
+    background-color: var(--focus-color);
+    &:hover {
+      @apply bg-(--focus-color)/90;
+    }
+  }
+
+/* Button */
+  input:where([type="button"], [type="submit"], [type="reset"]), button, [role="button"] {
+    @apply rounded-md px-2 py-1 font-semibold;
+    border-width: 1px;
+    
+    user-select: none;
+    cursor: pointer;
+    
+    transition: color 0.1s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out;
+    
+    &:hover {
+      @apply bg-(--hover-color);
+    }
+    &:focus {
+      background-color: var(--bg-color);
+    }
+    &:active {
+      background-color: var(--focus-color);
+      color: var(--bg-color);
+    }
+  }
+
+  input[type="file"] {
+    &::file-selector-button {
+      @apply border rounded-md p-1 font-semibold;
+      user-select: none;
+      cursor: pointer;
+    }
+    &:hover::file-selector-button {
+      @apply bg-(--hover-color);
+    }
+    &:active::file-selector-button {
+      background-color: var(--focus-color);
+      color: var(--bg-color);
+    }
+  }
+  
+  label {
+    &:has(> input) {
+      @apply text-sm p-2;
+      display: flex;
+      align-items: center;
+      &:focus-within {
+        border-color: var(--focus-color);
+      }
+    }
+
+    &:has(:user-invalid) {
+      @apply border-red-500!;
+    }
+  }
+
+  label:has(input[type="search"]):before {
+    content: '🔎';
+    display: block;
   }
 
   dialog {
     max-width: 100vw;
     max-height: 100vh;
+
+    background-color: transparent;
+    overflow-x: hidden;
+    color: var(--font-sans);
+    overscroll-behavior: contain;
+
+    &::backdrop {
+      background-color: transparent;
+      
+      transition: 
+        display 0.2s allow-discrete, 
+        overlay 0.2s allow-discrete,
+        background-color 0.2s ease-out
+      ;
+    }
+
+    &[open]::backdrop {
+      background-color: hsl(from var(--bg-color) h s l / 40%);
+      @apply backdrop-blur-3xs;
+    }
   }
 
-  dialog::backdrop {
-    background-color: hsl(from var(--bg-color) h s l / 20%);
-    @apply backdrop-blur-xs;
+  
+
+  @starting-style {
+    dialog[open]::backdrop {
+      background-color: transparent;
+    }
   }
 }
 
@@ -62,8 +249,8 @@
     @apply appearance-none;
   }
 
-  .button {
-    @apply border rounded-md p-1 cursor-pointer block min-w-fit;
+  .focus-border {
+    @apply border rounded-md focus-within:border-(--focus-color);
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -74,10 +261,40 @@
     scrollbar-width: none;
   }
 
+
   dialog.modal {
     margin: auto;
-    @apply w-[90vw] md:w-[50vw] lg:w-[40vw] rounded-xl border;
+    width: 90vw;
+    border-width: 1px;
+    @apply rounded-xl;
+    
+    transition: 
+      display 100ms allow-discrete, /*foda dms vtnc*/
+      overlay 100ms allow-discrete,
+
+      opacity 100ms ease-out, 
+      transform 100ms ease-out
+    ;
+    
+    opacity: 0;
+    transform: scale(0.95);
   }
+
+  dialog[open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @starting-style {
+    dialog[open] {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  
+  
+
 
   dialog.top-left {
     user-select: none;
@@ -89,7 +306,4 @@
     margin-left: auto;
   }
 
-  .focus-border {
-    @apply border rounded-md block min-w-fit focus-within:border-(--focus-color);
-  }
 }

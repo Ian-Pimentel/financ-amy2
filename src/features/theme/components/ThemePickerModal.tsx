@@ -42,10 +42,10 @@ export default function ThemePickerModal({ isOpen, toggleIsOpen }: Props) {
                     </fieldset>
                 </form>
 
-                <footer className="mt-2 flex justify-between *:h-full">
-                    <button type="button" className="button w-1/4" onClick={handleCancel}>Cancelar</button>
-                    <button type="button" className="button w-1/4 line-clamp-1!" onClick={resetTheme}>Resetar Tema</button>
-                    <input type="submit" className="button w-1/4" value="Salvar" form="set-theme-form" />
+                <footer className="mt-2 flex gap-2 justify-between *:h-full">
+                    <button type="button" className="w-2/5" onClick={handleCancel}>Cancelar</button>
+                    <button type="button" className="line-clamp-1! w-[stretch] sm:w-1/3" onClick={resetTheme}>Resetar Tema</button>
+                    <input type="submit" className="w-2/5" value="Salvar" form="set-theme-form" />
                 </footer>
             </div>
         </Dialog>

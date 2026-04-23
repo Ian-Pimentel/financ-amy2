@@ -11,7 +11,6 @@ import MonthWrapper from "./features/month/components/MonthWrapper";
 import { MONTHS } from "./shared/constants";
 import type { MonthIndices } from "./types";
 
-
 export function App() {
   const [baseSalary, setBaseSalary] = useBaseSalary();
   const { openMonetaryPromptModal } = useModals();
@@ -27,9 +26,8 @@ export function App() {
     });
   }, []);
 
-  return (<>
+  return !needsSalary && (<>
     <TopBar />
-
     <main>
       {MONTHS.map((month, monthIdx: MonthIndices) => {
         return <MonthWrapper key={month} monthIdx={monthIdx} />
@@ -49,7 +47,7 @@ function TopBar() {
   return (
     <header className="grid grid-cols-[1fr_auto_1fr] items-center *:first:justify-self-start *:last:justify-self-end">
       <ToggleButton isActive={isMenuOpen} toggleActive={toggleMenuIsOpen}>
-        <div className="text-lg">⚙️</div>
+        <div className="text-lg transition-transform ease-out duration-400 has-[+:checked]:rotate-180">⚙️</div>
       </ToggleButton>
       <YearChanger year={year} setYear={setYear} />
       <div />

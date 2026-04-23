@@ -7,9 +7,9 @@ export default function YearChanger({ year, setYear }: Props) {
 
     return (
         <div className="flex justify-center items-center gap-2">
-            <button type="button" className="button" onClick={() => setYear(year - 1)}>{year - 1}</button>
-            <span>{year}</span>
-            <button type="button" className="button" onClick={() => setYear(year + 1)}>{year + 1}</button>
+            <button type="button" onClick={() => setYear(year - 1)}>{year - 1}</button>
+            <div className="text-xl select-none">{year}</div>
+            <button type="button" onClick={() => setYear(year + 1)}>{year + 1}</button>
         </div>
     );
 }

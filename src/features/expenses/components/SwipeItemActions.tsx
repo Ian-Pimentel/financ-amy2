@@ -17,9 +17,10 @@ export function SwipeItemActions({ expense }: Props) {
     }
 
     return (
-        <div className="flex h-full w-16 justify-center items-center border-(--light-border-color) border-b">
-            <button type="button" className="inline-block cursor-pointer text-xl" onClick={handleOpenMapCategory}>
-                🏷️
+        <div className="flex w-24 h-full border-(--light-border-color) border-b">
+            <button type="button" className="p-0 border-none rounded-none grow" onClick={handleOpenMapCategory}>
+                {/* 🏷️ */}
+                <div className="text-2xl">🏷️</div>
             </button>
         </div>
     );
