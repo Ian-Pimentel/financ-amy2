@@ -42,18 +42,18 @@ export default function AddRecurrentExpenseModal({ isOpen, toggleIsOpen }: Props
     const [value, setValue] = useState(0);
     const [fromDate, setFromDate] = useState(() => new Date);
     const [installments, setInstallments] = useState<number>();
-    const [toDate, setToDate] = useState(() => {
-        const date = new Date;
-        date.setMonth(date.getMonth() + 1);
-        return date
-    });
+    // const [toDate, setToDate] = useState(() => {
+    //     const date = new Date;
+    //     date.setMonth(date.getMonth() + 1);
+    //     return date
+    // });
 
     const [error, setError] = useState('');
 
     const handleSubmit = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
 
-        if (toDate <= fromDate || installments === undefined) {
+        if (/*toDate <= fromDate || */installments === undefined) {
             setError('A data de final deve ser maior que a inicial.');
             return;
         }
@@ -106,16 +106,16 @@ export default function AddRecurrentExpenseModal({ isOpen, toggleIsOpen }: Props
     }
 
     const cleanForm = () => {
-        setName('teste parcelado');
-        setCategory('CONTAS');
-        setValue(650.50);
+        setName('');
+        setCategory('');
+        setValue(0);
         setFromDate(() => new Date)
         setInstallments(0);
-        setToDate(() => {
-            const today = new Date;
-            today.setMonth(today.getMonth() + 1);
-            return today;
-        });
+        // setToDate(() => {
+        //     const today = new Date;
+        //     today.setMonth(today.getMonth() + 1);
+        //     return today;
+        // });
         setError('');
     }
 
