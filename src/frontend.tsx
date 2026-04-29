@@ -5,9 +5,9 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 
 import { rootRoute } from "./routes/__root";
 import { indexRoute } from "./routes/index";
-import { aboutRoute } from "./routes/about";
+import { dashboardRoute } from "./routes/dashboard";
 
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute]);
 
 const router = createRouter({ routeTree });
 

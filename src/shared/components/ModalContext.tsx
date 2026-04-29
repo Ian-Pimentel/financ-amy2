@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import CategoriesManagerModal from "@/features/categories/components/CategoriesManagerModal";
 import { useToggle } from "usehooks-ts";
 import SideMenu from "@/features/sideMenu/components/SideMenu";
@@ -7,6 +7,7 @@ import AddRecurrentExpenseModal from "@/features/expenses/components/AddRecurren
 import MonetaryPromptModal from "./MonetaryPromptModal";
 import type { Expense } from "@/db/dexieDB";
 import MapExpenseCategoryModal from "@/features/categories/components/MapExpenseCategoryModal";
+import { useLocation } from "@tanstack/react-router";
 
 export type MapExpenseCategoryPayload = {
     expense: Expense;
@@ -24,17 +25,19 @@ type ModalContextData = {
     isMenuOpen: boolean;
     toggleMenuIsOpen: () => void;
 
-    toggleCategoriesManagerModal: () => void;
-    toggleThemePickerModal: () => void;
-    toggleRecurrentExpenseModalOpen: () => void;
+    toggleCategoriesManager: () => void;
+    toggleThemePicker: () => void;
+    toggleRecurrentExpense: () => void;
 
-    openMapExpenseCategoryModal: (payload: MapExpenseCategoryPayload) => void;
-    openMonetaryPromptModal: (payload: MonetaryModalPayload) => void;
+    openMapExpenseCategory: (payload: MapExpenseCategoryPayload) => void;
+    openMonetaryPrompt: (payload: MonetaryModalPayload) => void;
 }
 
 const ModalContext = createContext<ModalContextData>({} as ModalContextData);
 
 export default function ModalProvider({ children }: React.PropsWithChildren) {
+    const location = useLocation();
+    const isFirstRender = useRef(true);
 
     const [mapExpenseCategoryPayload, setMapExpenseCategoryPayload] = useState<MapExpenseCategoryPayload | null>(null);
     const closeMapExpenseCategoryModal = () => setMapExpenseCategoryPayload(null);
@@ -42,28 +45,43 @@ export default function ModalProvider({ children }: React.PropsWithChildren) {
     const [monetaryPayload, setMonetaryPayload] = useState<MonetaryModalPayload | null>(null);
     const closeMonetaryPromptModal = () => setMonetaryPayload(null);
 
-    const [isMenuOpen, toggleMenuIsOpen] = useToggle(false);
-    const [isThemePickerModalOpen, toggleThemePickerModal] = useToggle(false);
-    const [isCategoriesManagerModalOpen, toggleCategoriesManagerModal] = useToggle(false);
-    const [isRecurrentExpenseModalOpen, toggleRecurrentExpenseModalOpen] = useToggle(false);
+    const [isMenuOpen, toggleMenuIsOpen, setMenuIsOpen] = useToggle(false);
+    const [isThemePickerModalOpen, toggleThemePicker, setThemePickerIsOpen] = useToggle(false);
+    const [isCategoriesManagerModalOpen, toggleCategoriesManager, setCategoriesManagerIsOpen] = useToggle(false);
+    const [isRecurrentExpenseModalOpen, toggleRecurrentExpense, setRecurrentExpenseIsOpen] = useToggle(false);
 
+    const closeAll = () => {
+        closeMapExpenseCategoryModal();
+        closeMonetaryPromptModal();
+        setMenuIsOpen(false);
+        setThemePickerIsOpen(false);
+        setCategoriesManagerIsOpen(false);
+        setRecurrentExpenseIsOpen(false);
+    }
+
+    useEffect(() => {
+        if (!isFirstRender.current) {
+            closeAll();
+        } else isFirstRender.current = false;
+
+    }, [location])
 
     return (
         <ModalContext.Provider value={{
             isMenuOpen,
             toggleMenuIsOpen,
-            toggleCategoriesManagerModal,
-            toggleThemePickerModal,
-            toggleRecurrentExpenseModalOpen,
+            toggleCategoriesManager,
+            toggleThemePicker,
+            toggleRecurrentExpense,
 
-            openMapExpenseCategoryModal: (payload) => setMapExpenseCategoryPayload(payload),
-            openMonetaryPromptModal: (payload) => setMonetaryPayload(payload)
+            openMapExpenseCategory: (payload) => setMapExpenseCategoryPayload(payload),
+            openMonetaryPrompt: (payload) => setMonetaryPayload(payload)
         }}>
             {children}
             <SideMenu isOpen={isMenuOpen} toggleIsOpen={toggleMenuIsOpen} />
-            <ThemePickerModal isOpen={isThemePickerModalOpen} toggleIsOpen={toggleThemePickerModal} />
-            <CategoriesManagerModal isOpen={isCategoriesManagerModalOpen} toggleIsOpen={toggleCategoriesManagerModal} />
-            <AddRecurrentExpenseModal isOpen={isRecurrentExpenseModalOpen} toggleIsOpen={toggleRecurrentExpenseModalOpen} />
+            <ThemePickerModal isOpen={isThemePickerModalOpen} toggleIsOpen={toggleThemePicker} />
+            <CategoriesManagerModal isOpen={isCategoriesManagerModalOpen} toggleIsOpen={toggleCategoriesManager} />
+            <AddRecurrentExpenseModal isOpen={isRecurrentExpenseModalOpen} toggleIsOpen={toggleRecurrentExpense} />
 
             <MapExpenseCategoryModal
                 expense={mapExpenseCategoryPayload?.expense}

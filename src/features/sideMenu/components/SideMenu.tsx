@@ -3,6 +3,7 @@ import MenuItem from "./MenuItem";
 import clearAllData from "@/shared/utils/clearAllData";
 import useBaseSalary from "@/features/salary/hooks/useBaseSalary";
 import { useModals } from "@/shared/components/ModalContext";
+import { Link } from "@tanstack/react-router";
 
 type Props = {
     isOpen: boolean;
@@ -11,10 +12,10 @@ type Props = {
 
 export default function SideMenu({ isOpen, toggleIsOpen }: Props) {
     const {
-        toggleCategoriesManagerModal,
-        toggleRecurrentExpenseModalOpen,
-        toggleThemePickerModal,
-        openMonetaryPromptModal,
+        toggleCategoriesManager,
+        toggleRecurrentExpense,
+        toggleThemePicker,
+        openMonetaryPrompt,
     } = useModals();
 
     const [baseSalary, setBaseSalary] = useBaseSalary();
@@ -35,12 +36,11 @@ export default function SideMenu({ isOpen, toggleIsOpen }: Props) {
 
                 <div className="p-1">
                     <ul className="*:last:border-none">
-                        <MenuItem title="Categorias" action={toggleCategoriesManagerModal} />
-                        <MenuItem title="Gasto Parcelado" action={toggleRecurrentExpenseModalOpen} />
-                        <MenuItem title="Mudar Tema" action={toggleThemePickerModal} />
-
+                        <MenuItem title="Categorias" action={toggleCategoriesManager} />
+                        <MenuItem title="Gasto Parcelado" action={toggleRecurrentExpense} />
+                        <MenuItem title="Mudar Tema" action={toggleThemePicker} />
                         <MenuItem title="Alterar Salário" action={() =>
-                            openMonetaryPromptModal({
+                            openMonetaryPrompt({
                                 title: "Novo Salário",
                                 initialValue: baseSalary,
                                 onSave(amount) {
@@ -49,6 +49,10 @@ export default function SideMenu({ isOpen, toggleIsOpen }: Props) {
                             })
                         } />
                         <MenuItem title="Apagar Dados" action={handleClearData} />
+
+                        <Link to="/dashboard">
+                            <MenuItem title="Gráficos" action={() => { }} />
+                        </Link>
                     </ul>
                 </div>
             </aside>

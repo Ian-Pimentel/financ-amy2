@@ -26,7 +26,7 @@ export default function MonthWrapper({ monthIdx }: Props) {
     const [baseSalary] = useBaseSalary();
     const monthSalary = useMonthSalaryQuery(year, monthIdx);
 
-    const { openMonetaryPromptModal } = useModals();
+    const { openMonetaryPrompt } = useModals();
 
     const month = MONTHS[monthIdx]!;
 
@@ -55,7 +55,7 @@ export default function MonthWrapper({ monthIdx }: Props) {
         const monthName = month.charAt(0) + month.slice(1).toLowerCase();
 
         ev.stopPropagation();
-        openMonetaryPromptModal({
+        openMonetaryPrompt({
             title: `Salário no mês de ${monthName}`,
             initialValue: salary,
             onSave: handlePutMonthSalary,

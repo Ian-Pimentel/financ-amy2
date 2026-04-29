@@ -162,19 +162,20 @@
     display: flex;
     flex-direction: column;
 
-    /* divide do tailwind */
+    /* divide q portei do tailwind */
     :where(& > :not(:last-child)) {
       border-color: var(--light-border-color);
       border-bottom-width: var(--fieldset-border);
     }
 
+    /* legends no primeiro nível */
     &:focus-within, &:hover {
       > legend {
         border-color: var(--focus-color);
       }
     }
 
-    /* insets */
+    /* legends no do segundo nível em diante */
     fieldset > legend {
       border-left-width: var(--fieldset-border);
       @apply pt-2 pl-1;

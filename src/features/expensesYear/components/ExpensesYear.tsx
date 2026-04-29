@@ -1,23 +1,23 @@
 import { useModals } from "@/shared/components/ModalContext";
-import useBaseSalary from "../salary/hooks/useBaseSalary";
+import useBaseSalary from "@/features/salary/hooks/useBaseSalary";
 import { useEffect } from "react";
 import type { MonthIndices } from "@/types";
-import MonthWrapper from "../month/components/MonthWrapper";
-import CategoriesDatalist from "../categories/components/CategoriesDatalist";
-import Notes from "../notes/components/Notes";
+import MonthWrapper from "@/features/month/components/MonthWrapper";
+import CategoriesDatalist from "@/features/categories/components/CategoriesDatalist";
+import Notes from "@/features/notes/components/Notes";
 import ToggleButton from "@/shared/components/ToggleButton";
-import useYear from "../year/hooks/useYear";
-import YearChanger from "../year/components/YearChanger";
+import useYear from "@/features/year/hooks/useYear";
+import YearChanger from "@/features/year/components/YearChanger";
 import { MONTHS } from "@/shared/constants";
 
 export default function ExpensesYear() {
     const [baseSalary, setBaseSalary] = useBaseSalary();
-    const { openMonetaryPromptModal } = useModals();
+    const { openMonetaryPrompt } = useModals();
 
     const needsSalary = baseSalary <= 0;
 
     useEffect(() => {
-        if (needsSalary) openMonetaryPromptModal({
+        if (needsSalary) openMonetaryPrompt({
             onSave(amount) {
                 setBaseSalary(amount);
             },

@@ -1,4 +1,4 @@
-import ExpensesYear from "./features/expensesYear/ExpensesYear";
+import ExpensesYear from "./features/expensesYear/components/ExpensesYear";
 import "./index.css";
 import ModalProvider from "./shared/components/ModalContext";
 
