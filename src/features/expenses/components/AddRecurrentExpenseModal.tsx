@@ -14,6 +14,177 @@ type Props = {
     toggleIsOpen: () => void;
 }
 
+export default function AddRecurrentExpenseModal({ isOpen, toggleIsOpen }: Props) {
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState('');
+    const [total, setValue] = useState(0);
+    const [fromDate, setFromDate] = useState(() => new Date);
+    const [isInstallment, setIsInstallment] = useState(false);
+    const [installments, setInstallments] = useState<number>();
+    const [toDate, setToDate] = useState(() => {
+        const date = new Date;
+        date.setMonth(date.getMonth() + 1);
+        return date
+    });
+
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (ev: React.SubmitEvent) => {
+        ev.preventDefault();
+
+        let expensesToAdd: InsertExpense[];
+
+        if (isInstallment) {
+            expensesToAdd = expenseInInstallments(fromDate, installments!, name, total);
+        }
+        else {
+            if (toDate <= fromDate) {
+                setError('A data de final deve ser maior que a inicial.');
+                return;
+            }
+            expensesToAdd = recurrentExpenses(fromDate, toDate, name, total);
+        }
+
+        await bulkAddExpenseAndCategory(expensesToAdd, category);
+
+        toggleIsOpen();
+    }
+
+    const cleanForm = () => {
+        setName('');
+        setCategory('');
+        setValue(0);
+        setFromDate(() => new Date)
+        setInstallments(0);
+        setToDate(() => {
+            const today = new Date;
+            today.setMonth(today.getMonth() + 1);
+            return today;
+        });
+        setError('');
+    }
+
+    useEffect(() => {
+        if (!isOpen) {
+            cleanForm();
+            return
+        }
+    }, [isOpen]);
+
+    return (
+        <Dialog isOpen={isOpen} onCancel={toggleIsOpen} dismissable>
+            <div className="p-2 bg-(--bg-color)">
+                <header className="mb-2 text-lg font-semibold">
+                    Adicionar Gasto Recorrente
+                </header>
+                <form id="add-recurrent-expense-form" onSubmit={handleSubmit}>
+                    <fieldset>
+                        <div className="md:flex md:gap-1">
+                            <label className="md:grow">
+                                <span className="text-sm font-semibold">Nome</span>
+                                <div className="focus-border p-1">
+                                    <input value={name} onChange={ev => setName(ev.target.value)}
+                                        type="text" name="expense-name"
+                                        id="add-recurrent-expense-name"
+                                        required
+                                    />
+                                </div>
+                            </label>
+                            <label className="md:grow">
+                                <span className="text-sm font-semibold">Categoria</span>
+                                <div className="focus-border p-1">
+                                    <input value={category} onChange={ev => setCategory(ev.target.value)}
+                                        type="text" name="expense-category"
+                                        id="add-recurrent-expense-category"
+                                        list="categories-list"
+                                    />
+                                </div>
+                            </label>
+                        </div>
+                        <div className="flex gap-1 items-end">
+                            <label className="grow">
+                                <span className="text-sm font-semibold">Valor Total</span>
+                                <div className="focus-border p-1">
+                                    <MonetaryInput
+                                        value={total} setValue={(value) => setValue(value)}
+                                        alignRight required
+                                    />
+                                </div>
+                            </label>
+                            <label className="flex gap-1 bg-transparent!">
+                                <span className="text-sm font-semibold">Parcelado?</span>
+                                <input
+                                    checked={isInstallment} onChange={ev => setIsInstallment(ev.target.checked)}
+                                    type="checkbox" name="expense-is-installment"
+                                    id="add-recurrent-expense-is-installment"
+                                />
+                            </label>
+                        </div>
+                    </fieldset>
+                    <fieldset className="md:flex md:gap-1">
+                        <label className="md:grow">
+                            <span className="text-sm font-semibold">Começo</span>
+                            <div className="focus-border p-1">
+                                <input
+                                    value={toISODate(fromDate)}
+                                    onChange={ev => {
+                                        const raw = ev.target.value;
+                                        if (raw) setFromDate(new Date(`${raw}T00:00:00`));
+                                    }}
+                                    type="date"
+                                    name="date-from"
+                                    id="add-recurrent-expense-date-from"
+                                    required
+                                    max="9999-12-31"
+                                />
+                            </div>
+                        </label>
+
+                        {isInstallment &&
+                            <label className="md:grow">
+                                <span className="text-sm font-semibold">Parcelas</span>
+                                <div className="focus-border p-1">
+                                    <input
+                                        value={installments || ""}
+                                        onChange={ev => setInstallments(ev.target.valueAsNumber)}
+                                        type="number" name="installments"
+                                        min={1} step={1}
+                                        id="add-recurrent-expense-installments"
+                                        required
+                                    />
+                                </div>
+                            </label>}
+
+                        {!isInstallment &&
+                            <label className="md:grow">
+                                <span className="text-sm font-semibold">Fim</span>
+                                <div className="focus-border p-1">
+                                    <input
+                                        value={toISODate(toDate)}
+                                        onChange={ev => {
+                                            const raw = ev.target.value;
+                                            if (raw) setToDate(new Date(`${raw}T00:00:00`));
+                                        }}
+
+                                        type="date" name="date-to"
+                                        max="9999-12-31"
+                                        id="add-recurrent-expense-date-to"
+                                        required
+                                    />
+                                </div>
+                            </label>}
+                    </fieldset>
+                    {error && <ErrorMessage message={error} />}
+                </form>
+                <footer className="mt-3 flex justify-between">
+                    <button type="button" onClick={toggleIsOpen}>Cancelar</button>
+                    <input type="submit" value="Adicionar" form="add-recurrent-expense-form" />
+                </footer>
+            </div>
+        </Dialog>
+    );
+}
+
 const toISODate = (date: Date) => date.toISOString().split('T')[0]!;
 
 // só queria usar isso uma vez na vida kkkkkkkkk
@@ -36,187 +207,49 @@ function* monthAdder(year: number, monthIndice: MonthIndices): Generator<[number
     }
 }
 
-export default function AddRecurrentExpenseModal({ isOpen, toggleIsOpen }: Props) {
-    const [name, setName] = useState('');
-    const [categoryName, setCategory] = useState('');
-    const [value, setValue] = useState(0);
-    const [fromDate, setFromDate] = useState(() => new Date);
-    const [installments, setInstallments] = useState<number>();
-    // const [toDate, setToDate] = useState(() => {
-    //     const date = new Date;
-    //     date.setMonth(date.getMonth() + 1);
-    //     return date
-    // });
+const bulkAddExpenseAndCategory = (expensesToAdd: InsertExpense[], category: string) =>
+    db.transaction('rw', [db.expenses, db.categories, db.expenseCategory], async () => {
+        const ids = await bulkAddExpense(expensesToAdd);
 
-    const [error, setError] = useState('');
-
-    const handleSubmit = async (ev: React.SubmitEvent) => {
-        ev.preventDefault();
-
-        if (/*toDate <= fromDate || */installments === undefined) {
-            setError('A data de final deve ser maior que a inicial.');
-            return;
+        if (category !== '') {
+            const categoryId = await getOrAddCategoryByName(category);
+            if (categoryId === undefined) return; //como categoria é opcional, não preciso throw Error pra cancelar a transação
+            const mapsToAdd = ids.map(expenseId => { return { expenseId, categoryId }; });
+            await bulkAddExpenseCategory(mapsToAdd);
         }
+    });
 
-        const expensesToAdd: InsertExpense[] = [];
-        const _monthAdder = monthAdder(fromDate.getFullYear(), fromDate.getMonth());
+const expenseInInstallments = (fromDate: Date, installments: number, name: string, total: number) => {
+    const expensesToAdd: InsertExpense[] = [];
+    const _monthAdder = monthAdder(fromDate.getFullYear(), fromDate.getMonth());
 
-        let i = installments;
+    let i = installments;
 
-        // 1/1/0001 -> 31/12/9999
-        // (Android) 78ms
-        // (PC 4x slow) 16.7ms
-        // (PC) 4.7ms
-        while (i-- > 0) {
-            const [year, monthIndice] = _monthAdder.next().value!;
-            expensesToAdd.push({
-                name, value: value / installments,
-                date: new Date(year, monthIndice)
-            });
-        }
-
-        // const currentDate = new Date(fromDate);
-        // 
-        // 1/1/0001 -> 31/12/9999
-        // (Android) 962ms kkkkkkkkkkkkkkk
-        // (PC 4x slow) 365.6ms
-        // (PC) 43ms
-        // while (currentDate <= toDate) {
-        //     expensesToAdd.push({
-        //         name, value,
-        //         date: new Date(currentDate)
-        //     });
-
-        //     currentDate.setMonth(currentDate.getMonth() + 1);
-        // }
-
-        await db.transaction('rw', [db.expenses, db.categories, db.expenseCategory], async () => {
-            const ids = await bulkAddExpense(expensesToAdd);
-
-            if (categoryName !== '') {
-                const categoryId = await getOrAddCategoryByName(categoryName);
-                if (categoryId === undefined) return; //como categoria é opcional, não preciso throw Error pra cancelar a transação
-                const mapsToAdd = ids.map(expenseId => { return { expenseId, categoryId } });
-                await bulkAddExpenseCategory(mapsToAdd);
-            }
+    while (i-- > 0) {
+        const [year, monthIndice] = _monthAdder.next().value!;
+        expensesToAdd.push({
+            name, value: total / installments,
+            date: new Date(year, monthIndice)
         });
-
-
-        toggleIsOpen();
     }
+    return expensesToAdd;
+}
 
-    const cleanForm = () => {
-        setName('');
-        setCategory('');
-        setValue(0);
-        setFromDate(() => new Date)
-        setInstallments(0);
-        // setToDate(() => {
-        //     const today = new Date;
-        //     today.setMonth(today.getMonth() + 1);
-        //     return today;
-        // });
-        setError('');
+const recurrentExpenses = (fromDate: Date, toDate: Date, name: string, total: number) => {
+    const expensesToAdd: InsertExpense[] = [];
+    const _monthAdder = monthAdder(fromDate.getFullYear(), fromDate.getMonth());
+
+    const toYear = toDate.getFullYear();
+    const toMonthIndice = toDate.getMonth();
+
+    while (true) {
+        const [year, monthIndice] = _monthAdder.next().value!;
+        if (year > toYear || (year === toYear && monthIndice > toMonthIndice)) break;
+
+        expensesToAdd.push({
+            name, value: total,
+            date: new Date(year, monthIndice)
+        });
     }
-
-    useEffect(() => {
-        if (!isOpen) {
-            cleanForm();
-            return
-        }
-    }, [isOpen]);
-
-    return (
-        <Dialog isOpen={isOpen} onCancel={toggleIsOpen} dismissable>
-            <div className="p-2 bg-(--bg-color)">
-                <header className="mb-2 text-lg font-semibold">
-                    Adicionar Gasto Parcelado
-                </header>
-                <form id="add-recurrent-expense-form" onSubmit={handleSubmit}>
-                    <fieldset>
-                        <label htmlFor="add-recurrent-expense-name" className="text-sm font-semibold inline-block w-full">Nome</label>
-                        <input value={name} onChange={ev => setName(ev.target.value)}
-                            className="focus-border p-1"
-                            type="text" name="expense-name"
-                            id="add-recurrent-expense-name"
-                            required
-                        />
-                        <div className="flex gap-1">
-                            <div className="grow">
-                                <label htmlFor="add-recurrent-expense-category" className="text-sm font-semibold inline-block w-full">Categoria</label>
-                                <input value={categoryName} onChange={ev => setCategory(ev.target.value)}
-                                    list="categories-list"
-                                    className="focus-border p-1"
-                                    type="text" name="expense-category"
-                                    id="add-recurrent-expense-category"
-                                />
-                            </div>
-                            <label className="grow">
-                                <span className="text-sm font-semibold inline-block w-full">Valor</span>
-                                <div className="focus-border p-1">
-                                    <MonetaryInput
-                                        value={value} setValue={(value) => setValue(value)}
-                                        alignRight required
-                                    />
-                                </div>
-                            </label>
-                        </div>
-
-                    </fieldset>
-                    <fieldset className="flex gap-1">
-                        <div className="grow">
-                            <label htmlFor="add-recurrent-expense-date-from" className="text-sm font-semibold inline-block w-full">Começo</label>
-                            <input
-                                value={toISODate(fromDate)}
-                                onChange={ev => {
-                                    const raw = ev.target.value;
-                                    if (raw) setFromDate(new Date(`${raw}T00:00:00`));
-                                }}
-                                className="focus-border p-1"
-                                type="date"
-                                name="date-from"
-                                id="add-recurrent-expense-date-from"
-                                required
-                                max="9999-12-31"
-                            />
-                        </div>
-
-                        <div className="grow basis-0">
-                            <label htmlFor="add-recurrent-expense-installments" className="text-sm font-semibold inline-block w-full">Parcelas</label>
-                            <input
-                                value={installments || ""}
-                                onChange={ev => setInstallments(ev.target.valueAsNumber)}
-                                className="focus-border p-1"
-                                type="number" name="installments"
-                                min={0} step={1}
-                                id="add-recurrent-expense-installments"
-                                required
-                            />
-                        </div>
-
-                        {/* <div className="grow">
-                            <label htmlFor="add-recurrent-expense-date-to" className="text-sm font-semibold inline-block w-full">Fim</label>
-                            <input
-                                value={toISODate(toDate)}
-                                onChange={ev => {
-                                    const raw = ev.target.value;
-                                    if (raw) setToDate(new Date(`${raw}T00:00:00`));
-                                }}
-                                className="outline-none border focus-border p-1 w-full "
-                                type="date" name="date-to"
-                                max="9999-12-31"
-                                id="add-recurrent-expense-date-to"
-                                required
-                            />
-                        </div> */}
-                    </fieldset>
-                    {error && <ErrorMessage message={error} />}
-                </form>
-                <footer className="mt-3 flex justify-between">
-                    <button type="button" onClick={toggleIsOpen}>Cancelar</button>
-                    <input type="submit" value="Adicionar" form="add-recurrent-expense-form" />
-                </footer>
-            </div>
-        </Dialog>
-    );
+    return expensesToAdd;
 }

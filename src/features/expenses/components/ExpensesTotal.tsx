@@ -7,7 +7,7 @@ type Props = {
 export default function ExpensesTotal({ total }: Props) {
     return <div className="contents *:border-(--light-border-color) *:border-[0_1_1_1] *:p-1 *:md:px-2">
         <span className="font-semibold ">
-            Total
+            Total Gasto
         </span>
         <span className="justify-end">
             <MonetaryDisplay amount={total} alignRight />

@@ -1,3 +1,5 @@
+import { getDecimalCount } from "@/shared/utils/getDecimalCount";
+
 type Props = {
     value?: number;
     required?: boolean;
@@ -7,6 +9,11 @@ type Props = {
 }
 
 export default function MonetaryInput({ value, required = false, setValue, onBlur, alignRight = false }: Props) {
+    const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        if (Number.isNaN(ev.target.valueAsNumber) || getDecimalCount(ev.target.value) > 2) return;
+        setValue(ev.target.valueAsNumber);
+    };
+
     return (
         <input
             type="number"
@@ -15,7 +22,7 @@ export default function MonetaryInput({ value, required = false, setValue, onBlu
             step={0.01}
 
             value={value || ""}
-            onChange={ev => setValue(ev.target.valueAsNumber)}
+            onChange={handleChange}
             placeholder="1500.00"
 
             className={"outline-none min-w-0 flex-1 " + (alignRight && "text-right")}

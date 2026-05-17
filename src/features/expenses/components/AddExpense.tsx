@@ -29,15 +29,16 @@ export default function AddExpense({ monthIdx }: Props) {
     const handleCreate = async (ev: React.SubmitEvent) => {
         ev.preventDefault();
 
-        const categId = await getOrAddCategoryByName(category);
-
         const expenseId = await addExpense({
             name: name,
             value: value,
             date: new Date(year, monthIdx)
         });
 
-        if (categId) await addExpenseCategory(expenseId, categId);
+        if (category) {
+            const categId = await getOrAddCategoryByName(category);
+            await addExpenseCategory(expenseId, categId!);
+        }
 
         clearForm();
     }

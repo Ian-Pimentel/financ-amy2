@@ -140,15 +140,16 @@
     @apply rounded-full;
   }
 
-  label > input:where([type="checkbox"], [type="radio"]) {
-    @apply mr-2;
+  label:has(input:where([type="checkbox"], [type="radio"])) {
+    cursor: pointer;
   }
 
   label:has(input:where([type="checkbox"], [type="radio"]):checked) {
     border-color: var(--focus-color);
-    background-color: var(--focus-color);
+    /* background-color: var(--focus-color); */
+    @apply font-semibold bg-(--focus-color)/65;
     &:hover {
-      @apply bg-(--focus-color)/90;
+      @apply bg-(--focus-color)/50;
     }
   }
 
@@ -169,7 +170,7 @@
       background-color: var(--bg-color);
     }
     &:active {
-      background-color: var(--focus-color);
+      background-color: var(--focus-color) !important;
       color: var(--bg-color);
     }
   }
@@ -250,6 +251,7 @@
   }
 
   .focus-border {
+    transition: color 0.1s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out, font-weight 0.15s ease-out;
     @apply border rounded-md focus-within:border-(--focus-color);
   }
 

@@ -24,9 +24,11 @@ function start() {
     );
   }
   else
-    root.render(<ModalProvider>
-      <App />
-    </ModalProvider>);
+    root.render(
+      <ModalProvider>
+        <App />
+      </ModalProvider>
+    );
 }
 
 if (document.readyState === "loading") {
